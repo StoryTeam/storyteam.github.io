@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="baidu-site-verification" content="vqJV77bZM6" />
   
-    <title>气泡抖动动画实现 | StoryTeam</title>
+    <title>手势和touch | StoryTeam</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="StoryTeam">
@@ -13,24 +13,20 @@
 
     <meta name="keywords" content="生活,笔记,经验,分享">
     <meta name="applicable-device" content="pc,mobile">
-    <meta name="description" content="1.Bezier曲线绘制圆形有的时候我们需要对圆形的某个部分进行形变处理，但是修改transform属性常常修改的是整个圆形的样式，无法满足我们的需求。所以我们需要用多段贝赛尔曲线来实现圆形的绘制，这样我们可以通过修改其中某一段曲线样式，从而实现针对圆形某个局部的变形。">
+    <meta name="description" content="背景：视频录制过程中，支持手势放大和缩小">
 <meta property="og:type" content="article">
-<meta property="og:title" content="气泡抖动动画实现">
-<meta property="og:url" content="http://StoryTeam.cn/2016/11/30/2016-11-30-气泡抖动动画实现/index.html">
+<meta property="og:title" content="手势和touch">
+<meta property="og:url" content="http://StoryTeam.cn/2016/10/31/2016-10-31-手势和touch/index.html">
 <meta property="og:site_name" content="StoryTeam">
-<meta property="og:description" content="1.Bezier曲线绘制圆形有的时候我们需要对圆形的某个部分进行形变处理，但是修改transform属性常常修改的是整个圆形的样式，无法满足我们的需求。所以我们需要用多段贝赛尔曲线来实现圆形的绘制，这样我们可以通过修改其中某一段曲线样式，从而实现针对圆形某个局部的变形。">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/17.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/18.gif">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/13.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/14.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/15.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/16.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/19.gif">
-<meta property="og:updated_time" content="2017-01-08T06:20:20.000Z">
+<meta property="og:description" content="背景：视频录制过程中，支持手势放大和缩小">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/29.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/30.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/31.jpg">
+<meta property="og:updated_time" content="2017-01-08T14:00:23.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="气泡抖动动画实现">
-<meta name="twitter:description" content="1.Bezier曲线绘制圆形有的时候我们需要对圆形的某个部分进行形变处理，但是修改transform属性常常修改的是整个圆形的样式，无法满足我们的需求。所以我们需要用多段贝赛尔曲线来实现圆形的绘制，这样我们可以通过修改其中某一段曲线样式，从而实现针对圆形某个局部的变形。">
-<meta name="twitter:image" content="http://ojfz9611q.bkt.clouddn.com/17.jpg">
+<meta name="twitter:title" content="手势和touch">
+<meta name="twitter:description" content="背景：视频录制过程中，支持手势放大和缩小">
+<meta name="twitter:image" content="http://ojfz9611q.bkt.clouddn.com/29.jpg">
 
     
     <link rel="alternative" href="/atom.xml" title="StoryTeam" type="application/atom+xml">
@@ -81,35 +77,44 @@
   <header class="article-info clearfix">
     <h1 itemprop="name">
       
-        <a href="/2016/11/30/2016-11-30-气泡抖动动画实现/" target="_blank" title="气泡抖动动画实现" itemprop="url">气泡抖动动画实现</a>
+        <a href="/2016/10/31/2016-10-31-手势和touch/" target="_blank" title="手势和touch" itemprop="url">手势和touch</a>
     </h1>
     <p class="article-time">
-      <time datetime="2016-11-30T10:24:00.000Z" itemprop="datePublished">2016-11-30</time>
-      <span class="toc-text">neil</span>
+      <time datetime="2016-10-31T12:42:00.000Z" itemprop="datePublished">2016-10-31</time>
+      <span class="toc-text">lilin</span>
       <span style="margin-left: 0.5em;"><i class="icon-eye-open"></i> <span class="viewcount"></span></span>
     </p>
   </header>
 
 	<div class="article-content">
 		
-		<h4 id="1-Bezier曲线绘制圆形"><a href="#1-Bezier曲线绘制圆形" class="headerlink" title="1.Bezier曲线绘制圆形"></a>1.Bezier曲线绘制圆形</h4><p>有的时候我们需要对圆形的某个部分进行形变处理，但是修改transform属性常常修改的是整个圆形的样式，无法满足我们的需求。所以我们需要用多段贝赛尔曲线来实现圆形的绘制，这样我们可以通过修改其中某一段曲线样式，从而实现针对圆形某个局部的变形。</p>
+		<h6 id="背景："><a href="#背景：" class="headerlink" title="背景："></a>背景：</h6><p>视频录制过程中，支持手势放大和缩小</p>
 <a id="more"></a>
-<p> <img src="http://ojfz9611q.bkt.clouddn.com/17.jpg" alt=""></p>
-<p>如上图，我们可以通过AB, BC, CD, DA四段贝塞尔曲线来合成一个圆形，这样我们就可以对圆的局部进行动画操作了。</p>
-<p>那么问题来了，如何通过Bezier曲线来拟合1/4的圆呢？<br>Bezier三阶曲线方程是：<code>P(t) = A*(1 - t)3 + C1*3(1 - t)2t + C2*3(1 - t)t2 + B*t3, t = 0 ... 1</code>。当A到 C1的距离和B到 C2的距离是3.6时，贝塞尔所拟合的曲线最接近1/4圆，具体的推导过程可以参考这篇博客<a href="http://blog.csdn.net/nibiewuxuanze/article/details/4810305" target="_blank" rel="external">http://blog.csdn.net/nibiewuxuanze/article/details/4810305</a> </p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/18.gif" alt="">        </p>
-<p>所以对于四个关键点和8个控制点的代码如下：</p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/13.jpg" alt=""></p>
-<p>将四段贝塞尔曲线拼接起来，我们就可以得到圆形了。</p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/14.jpg" alt=""></p>
-<h4 id="2-使用阻尼振动来模拟气泡的抖动过程"><a href="#2-使用阻尼振动来模拟气泡的抖动过程" class="headerlink" title="2.使用阻尼振动来模拟气泡的抖动过程"></a>2.使用阻尼振动来模拟气泡的抖动过程</h4><p>阻尼振动是指任何<a href="https://zh.wikipedia.org/wiki/%E6%8C%AF%E5%8A%A8" target="_blank" rel="external">振动</a>系统在振动中，由于外界作用（如流体<a href="https://zh.wikipedia.org/wiki/%E9%98%BB%E5%8A%9B" target="_blank" rel="external">阻力</a>、<a href="https://zh.wikipedia.org/wiki/%E6%91%A9%E6%93%A6%E5%8A%9B" target="_blank" rel="external">摩擦力</a>等）和/或系统本身固有的原因引起的<a href="https://zh.wikipedia.org/wiki/%E6%8C%AF%E5%B9%85" target="_blank" rel="external">振动幅度</a>逐渐下降，在实际振动中，由于摩擦力总是存在的，所以振动系统最初所获得的能量，在振动过程中因阻力不断对系统做负功，使得系统的能量不断减少，振动的强度逐渐减弱，振幅也就越来越小，以至于最后的停止振动，像这样的因系统的力学能，由于摩擦及转化成内能逐渐减少，振幅随时间而减弱振动，称为阻尼振动</p>
-<p>所以使用阻尼振动来模拟一些动画效果可以使得动画看起来更加流畅，逼真。<br>阻尼振动的具体实现就不详细列举了，有兴趣的同学可以看一下：<a href="https://zh.wikipedia.org/wiki/%E9%98%BB%E5%B0%BC" target="_blank" rel="external">https://zh.wikipedia.org/wiki/%E9%98%BB%E5%B0%BC</a> </p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/15.jpg" alt=""></p>
-<p>我们把X轴的位置当作上图点A的横坐标，通过阻尼运动来模拟A点在中心点的来回摆动，就可以得到一个气泡的摆动动画。（为来让动画看起来更明显，刻意延长了动画时间，增加了摆动幅度，所以可能动画看起来有点变扭）。</p>
-<p> <img src="http://ojfz9611q.bkt.clouddn.com/16.jpg" alt=""></p>
-<p>最终得到的效果图如下：</p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/19.gif" alt=""></p>
-<p>结：贝塞尔曲线和阻尼振动在动画的设计和实现上很好用，如果能灵活使用，我们可以实现出很多很好的动画效果</p>
+<h6 id="过程："><a href="#过程：" class="headerlink" title="过程："></a>过程：</h6><p>一开始觉得这个需求比较简单，不外乎加一个手势，调整一下手势的触发区域。但是在实际开发中，遇到了三个问题：<br>1 首先，缩放手势和录制按钮不在同一个view里，无法通过简单设置view.multipleTouchEnabled 来开启多点触控<br>2 缩放界面使用的是UIGestureRecognizer相关的接口，而录制按钮用的touches相关接口，这两套接口是否能完全协作 ？<br>3 缩放手势的View里还有其他两三个手势，这些手势本来就有了彼此的互斥逻辑，新的修改会不会对原本的逻辑有影响 ？</p>
+<p>对这块相关的技术不是很熟悉，不得不花了点时间，google和学习了一下相关的东西。</p>
+<p><strong>理解UITouch，UIEvent，UIGestureRecognizer以及UIResponder</strong><br>UITouch：一个触摸对象代表一根手指对屏幕的接触以及在屏幕上的移动。其生命周期从手指接触屏幕开始，到手指离开屏幕为止。</p>
+<p>手势：一个手势需要一根或多根手指完成，即一个手势包含一个或多个UITouch对象。</p>
+<p>触摸序列：用于描述手势发生时（多个）手指接触屏幕的过程。整个过程从构成手势的第一根手指接触屏幕开始，到手势进行完毕时的最后一个手指离开屏幕为止。</p>
+<p>UIEvent：代表iOS系统同外界互动时所发生的事件。有三种：触摸事件，动作事件，远程控制事件。对于触摸事件，UIEvent中保存着同当前触摸序列相关的UITouch对象。</p>
+<p>UIGestureRecognizer：用于识别特定手势。</p>
+<p>UIResponder：可以响应事件，动作消息等。多个响应对象组成响应链，从而形成完整的事件/消息响应体系。</p>
+<p>UITouch<br>UITouch是UIKit中处理用户触屏交互的底层对象。<br>每个UITouch都对应一个当前接触屏幕的手指。<br>如果手指移动，系统会不断更新UITouch的属性，例如previousLocationInView:和locationInView:。<br>在手势发生的过程中（触摸序列中），UITouch对象会被创建，被销毁，还会改变状态。例如，两个手指先后接触屏幕，而后又先后离开屏幕，在这个过程中，UITouch对象的数量会呈现1 –&gt; 2 –&gt; 1。<br>UIEvent<br>UIEvent用来代表触摸事件，可以将多个同时或近似时间发生的手指对屏幕的接触(UITouch)描述为一个整体，解读为一个特定的手势或动作。<br>UIEvent对象的生命周期也只维持在手势发生（触摸序列）期间，不要试图retain UIEvent或UITouch对象，如果需要记录它们的信息，应该复制这些信息。<br>UIGestureRecognizer<br>将其添加至视图，可以将触摸事件识别为特定的手势，如果识别成功，则调用关联的动作方法。在iOS中，一共有六种标准手势：</p>
+<p>点击<br>捏合<br>拖拽<br>滑动<br>旋转<br>长按<br>当然也可以自定义手势。</p>
+<p>UIResponder<br>让视图/控制器直接处理触摸事件，通过判定比较UITouch对象的前后状态，直接实现逻辑功能，例如绘画，拖动屏幕控件等。</p>
+<p>处理触摸事件的四个方法<br>不论是UIGestureRecognizer还是UIResponder，都利用这四个方法处理触摸事件。</p>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)<span class="string">touchesBegan:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event; <span class="comment">// 处理开始阶段的UITouch对象</span></div><div class="line"> </div><div class="line">- (<span class="keyword">void</span>)<span class="string">touchesMoved:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event; <span class="comment">// 处理移动阶段的UITouch对象</span></div><div class="line"> </div><div class="line">- (<span class="keyword">void</span>)<span class="string">touchesEnded:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event; <span class="comment">// 处理结束阶段的UITouch对象</span></div><div class="line"> </div><div class="line">- (<span class="keyword">void</span>)<span class="string">touchesCancelled:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event; <span class="comment">// 处理取消阶段的UITouch对象</span></div></pre></td></tr></table></figure>
+<p>多点触摸<br>涉及多个UITouch对象，需要比较它们前后的状态，可以使用CFDictionaryRef，将对象的地址作为键，状态（值）地址作为值，存入字典</p>
+<p>可以简单理解：<br>1 touch是比手势更底层的东西，touch经过系统的封装后，转为gesture，抛给上层<br>2 touch是view的固有方法，而gesture是touch和selector的链接点。</p>
+<p>为了简化了方便验证各种方案，单独写了个简单的demo：</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/29.jpg" alt=""></p>
+<p>通过抽象独立demo，避免每次都有启动QQ，大大节省了开发时间。</p>
+<p><strong>（原来的顺序，可以看到两个手势互相干扰）</strong></p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/30.jpg" alt=""></p>
+<p>最后通过重写了</p>
+<figure class="highlight erlang"><table><tr><td class="code"><pre><div class="line">- <span class="params">(BOOL)</span>gestureRecognizer:<span class="params">(UIGestureRecognizer *)</span>gestureRecognizer shouldReceiveTouch:<span class="params">(UITouch *)</span>touch</div><div class="line"> </div><div class="line">- <span class="params">(BOOL)</span>gestureRecognizer:<span class="params">(UIGestureRecognizer *)</span>gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:<span class="params">(UIGestureRecognizer *)</span>otherGestureRecognizer</div></pre></td></tr></table></figure>
+<p>解决了问题。<br><strong>（期望的顺序）</strong></p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/31.jpg" alt=""></p>
+<h6 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h6><p>一个View层级里手势会互相打断，比如view和subView，subsubView等，需要修改相应的手势delegate才能实现多点触控的效果<br>写独立demo来研究灭幼把握的技术点，可以大大加快开发流程，并且可以帮助过滤掉干扰。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -127,7 +132,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://StoryTeam.cn/2016/11/30/2016-11-30-气泡抖动动画实现/" data-title="气泡抖动动画实现 | StoryTeam" data-tsina="null" class="share clearfix">
+	  <div data-url="http://StoryTeam.cn/2016/10/31/2016-10-31-手势和touch/" data-title="手势和touch | StoryTeam" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -141,18 +146,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2016/11/30/2016-11-30-内存管理讨论总结/" title="内存管理讨论总结">
+ <a href="/2016/10/31/2016-10-31-CoreAnimation浅析/" title="CoreAnimation浅析">
   <strong>上一篇</strong><br/>
   <span>
-  内存管理讨论总结</span>
+  CoreAnimation浅析</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2016/11/23/2016-11-23-踩坑与收获 copy/"  title="踩坑与收获">
+<a href="/2014/07/05/2014-07-05-instrumentzhi-time-profiler/"  title="Instrument之time profiler">
  <strong>下一篇</strong><br/> 
- <span>踩坑与收获
+ <span>Instrument之time profiler
 </span>
 </a>
 </div>
@@ -161,7 +166,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2016/11/30/2016-11-30-气泡抖动动画实现/" data-title="气泡抖动动画实现" data-url="http://StoryTeam.cn/2016/11/30/2016-11-30-气泡抖动动画实现/"></div>
+	<div class="ds-thread" data-thread-key="2016/10/31/2016-10-31-手势和touch/" data-title="手势和touch" data-url="http://StoryTeam.cn/2016/10/31/2016-10-31-手势和touch/"></div>
 </section>
 
 
@@ -171,7 +176,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Bezier曲线绘制圆形"><span class="toc-number">1.</span> <span class="toc-text">1.Bezier曲线绘制圆形</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-使用阻尼振动来模拟气泡的抖动过程"><span class="toc-number">2.</span> <span class="toc-text">2.使用阻尼振动来模拟气泡的抖动过程</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#背景："><span class="toc-number">1.</span> <span class="toc-text">背景：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#过程："><span class="toc-number">2.</span> <span class="toc-text">过程：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#总结："><span class="toc-number">3.</span> <span class="toc-text">总结：</span></a></li></ol>
  
   </div>
 

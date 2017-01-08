@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="baidu-site-verification" content="vqJV77bZM6" />
   
-    <title>气泡抖动动画实现 | StoryTeam</title>
+    <title>CoreAnimation浅析 | StoryTeam</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="StoryTeam">
@@ -13,24 +13,23 @@
 
     <meta name="keywords" content="生活,笔记,经验,分享">
     <meta name="applicable-device" content="pc,mobile">
-    <meta name="description" content="1.Bezier曲线绘制圆形有的时候我们需要对圆形的某个部分进行形变处理，但是修改transform属性常常修改的是整个圆形的样式，无法满足我们的需求。所以我们需要用多段贝赛尔曲线来实现圆形的绘制，这样我们可以通过修改其中某一段曲线样式，从而实现针对圆形某个局部的变形。">
+    <meta name="description" content="iOS实现动画的方式看似多种多样，其核心均依赖Core Animation。比如UIView动画([UIView AnimateWithDuration:animations:]等），实质上是对Core Animation的封装，提供简洁的动画接口。下面将对Core Animation进行简单介绍。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="气泡抖动动画实现">
-<meta property="og:url" content="http://StoryTeam.cn/2016/11/30/2016-11-30-气泡抖动动画实现/index.html">
+<meta property="og:title" content="CoreAnimation浅析">
+<meta property="og:url" content="http://StoryTeam.cn/2016/10/31/2016-10-31-CoreAnimation浅析/index.html">
 <meta property="og:site_name" content="StoryTeam">
-<meta property="og:description" content="1.Bezier曲线绘制圆形有的时候我们需要对圆形的某个部分进行形变处理，但是修改transform属性常常修改的是整个圆形的样式，无法满足我们的需求。所以我们需要用多段贝赛尔曲线来实现圆形的绘制，这样我们可以通过修改其中某一段曲线样式，从而实现针对圆形某个局部的变形。">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/17.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/18.gif">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/13.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/14.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/15.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/16.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/19.gif">
-<meta property="og:updated_time" content="2017-01-08T06:20:20.000Z">
+<meta property="og:description" content="iOS实现动画的方式看似多种多样，其核心均依赖Core Animation。比如UIView动画([UIView AnimateWithDuration:animations:]等），实质上是对Core Animation的封装，提供简洁的动画接口。下面将对Core Animation进行简单介绍。">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/23.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/24.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/25.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/26.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/27.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/28.jpg">
+<meta property="og:updated_time" content="2017-01-08T13:52:52.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="气泡抖动动画实现">
-<meta name="twitter:description" content="1.Bezier曲线绘制圆形有的时候我们需要对圆形的某个部分进行形变处理，但是修改transform属性常常修改的是整个圆形的样式，无法满足我们的需求。所以我们需要用多段贝赛尔曲线来实现圆形的绘制，这样我们可以通过修改其中某一段曲线样式，从而实现针对圆形某个局部的变形。">
-<meta name="twitter:image" content="http://ojfz9611q.bkt.clouddn.com/17.jpg">
+<meta name="twitter:title" content="CoreAnimation浅析">
+<meta name="twitter:description" content="iOS实现动画的方式看似多种多样，其核心均依赖Core Animation。比如UIView动画([UIView AnimateWithDuration:animations:]等），实质上是对Core Animation的封装，提供简洁的动画接口。下面将对Core Animation进行简单介绍。">
+<meta name="twitter:image" content="http://ojfz9611q.bkt.clouddn.com/23.jpg">
 
     
     <link rel="alternative" href="/atom.xml" title="StoryTeam" type="application/atom+xml">
@@ -81,35 +80,43 @@
   <header class="article-info clearfix">
     <h1 itemprop="name">
       
-        <a href="/2016/11/30/2016-11-30-气泡抖动动画实现/" target="_blank" title="气泡抖动动画实现" itemprop="url">气泡抖动动画实现</a>
+        <a href="/2016/10/31/2016-10-31-CoreAnimation浅析/" target="_blank" title="CoreAnimation浅析" itemprop="url">CoreAnimation浅析</a>
     </h1>
     <p class="article-time">
-      <time datetime="2016-11-30T10:24:00.000Z" itemprop="datePublished">2016-11-30</time>
-      <span class="toc-text">neil</span>
+      <time datetime="2016-10-31T12:57:00.000Z" itemprop="datePublished">2016-10-31</time>
+      <span class="toc-text">da</span>
       <span style="margin-left: 0.5em;"><i class="icon-eye-open"></i> <span class="viewcount"></span></span>
     </p>
   </header>
 
 	<div class="article-content">
 		
-		<h4 id="1-Bezier曲线绘制圆形"><a href="#1-Bezier曲线绘制圆形" class="headerlink" title="1.Bezier曲线绘制圆形"></a>1.Bezier曲线绘制圆形</h4><p>有的时候我们需要对圆形的某个部分进行形变处理，但是修改transform属性常常修改的是整个圆形的样式，无法满足我们的需求。所以我们需要用多段贝赛尔曲线来实现圆形的绘制，这样我们可以通过修改其中某一段曲线样式，从而实现针对圆形某个局部的变形。</p>
+		<p>iOS实现动画的方式看似多种多样，其核心均依赖Core Animation。比如UIView动画([UIView AnimateWithDuration:animations:]等），实质上是对Core Animation的封装，提供简洁的动画接口。<br>下面将对Core Animation进行简单介绍。</p>
 <a id="more"></a>
-<p> <img src="http://ojfz9611q.bkt.clouddn.com/17.jpg" alt=""></p>
-<p>如上图，我们可以通过AB, BC, CD, DA四段贝塞尔曲线来合成一个圆形，这样我们就可以对圆的局部进行动画操作了。</p>
-<p>那么问题来了，如何通过Bezier曲线来拟合1/4的圆呢？<br>Bezier三阶曲线方程是：<code>P(t) = A*(1 - t)3 + C1*3(1 - t)2t + C2*3(1 - t)t2 + B*t3, t = 0 ... 1</code>。当A到 C1的距离和B到 C2的距离是3.6时，贝塞尔所拟合的曲线最接近1/4圆，具体的推导过程可以参考这篇博客<a href="http://blog.csdn.net/nibiewuxuanze/article/details/4810305" target="_blank" rel="external">http://blog.csdn.net/nibiewuxuanze/article/details/4810305</a> </p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/18.gif" alt="">        </p>
-<p>所以对于四个关键点和8个控制点的代码如下：</p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/13.jpg" alt=""></p>
-<p>将四段贝塞尔曲线拼接起来，我们就可以得到圆形了。</p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/14.jpg" alt=""></p>
-<h4 id="2-使用阻尼振动来模拟气泡的抖动过程"><a href="#2-使用阻尼振动来模拟气泡的抖动过程" class="headerlink" title="2.使用阻尼振动来模拟气泡的抖动过程"></a>2.使用阻尼振动来模拟气泡的抖动过程</h4><p>阻尼振动是指任何<a href="https://zh.wikipedia.org/wiki/%E6%8C%AF%E5%8A%A8" target="_blank" rel="external">振动</a>系统在振动中，由于外界作用（如流体<a href="https://zh.wikipedia.org/wiki/%E9%98%BB%E5%8A%9B" target="_blank" rel="external">阻力</a>、<a href="https://zh.wikipedia.org/wiki/%E6%91%A9%E6%93%A6%E5%8A%9B" target="_blank" rel="external">摩擦力</a>等）和/或系统本身固有的原因引起的<a href="https://zh.wikipedia.org/wiki/%E6%8C%AF%E5%B9%85" target="_blank" rel="external">振动幅度</a>逐渐下降，在实际振动中，由于摩擦力总是存在的，所以振动系统最初所获得的能量，在振动过程中因阻力不断对系统做负功，使得系统的能量不断减少，振动的强度逐渐减弱，振幅也就越来越小，以至于最后的停止振动，像这样的因系统的力学能，由于摩擦及转化成内能逐渐减少，振幅随时间而减弱振动，称为阻尼振动</p>
-<p>所以使用阻尼振动来模拟一些动画效果可以使得动画看起来更加流畅，逼真。<br>阻尼振动的具体实现就不详细列举了，有兴趣的同学可以看一下：<a href="https://zh.wikipedia.org/wiki/%E9%98%BB%E5%B0%BC" target="_blank" rel="external">https://zh.wikipedia.org/wiki/%E9%98%BB%E5%B0%BC</a> </p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/15.jpg" alt=""></p>
-<p>我们把X轴的位置当作上图点A的横坐标，通过阻尼运动来模拟A点在中心点的来回摆动，就可以得到一个气泡的摆动动画。（为来让动画看起来更明显，刻意延长了动画时间，增加了摆动幅度，所以可能动画看起来有点变扭）。</p>
-<p> <img src="http://ojfz9611q.bkt.clouddn.com/16.jpg" alt=""></p>
-<p>最终得到的效果图如下：</p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/19.gif" alt=""></p>
-<p>结：贝塞尔曲线和阻尼振动在动画的设计和实现上很好用，如果能灵活使用，我们可以实现出很多很好的动画效果</p>
+<h4 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1 基本概念"></a>1 基本概念</h4><p><strong>1.1 Core Animation性质</strong><br>Core Animation是一组非常强大的动画处理API，其有以下几点特性：<br>1、跨平台：<br>在Mac OS X平台、iOS平台上均可使用。<br>2、不阻塞主线程：<br>Core Animation的动画执行过程都是在后台操作的，因此不会阻塞主线程。<br>3、作用对象为CALayer：<br>在创建UIView对象时，UIView内部会自动创建一个图层，即CALayer对象。<br>当UIView需要显示到屏幕上时，会调用drawRect:方法进行绘图，并且会将所有内容绘制在自己的图层上，绘图完毕后，系统会将图层拷贝到屏幕上，由此完成UIView的显示。也就是说，UIView本身不具备显示的功能，是它内部的层才有显示功能。<br>而Core Animation是直接作用在CALayer上的，并非UIView。<br>4、隐式动画属性：<br>CALayer很多属性在修改时都能形成动画效果，这些效果被称为“隐式动画属性”，比如：<br>bounds：用于设置CALayer的宽度和高度。修改这个属性会产生缩放动画。<br>backgroundColor：用于设置CALayer的背景色。修改这个属性会产生背景色的渐变动画。<br>position：用于设置CALayer的位置。修改这个属性会产生平移动画。</p>
+<p>P.S.可以通过事务关闭隐式动画：<br>[CATransaction begin];<br>// 关闭隐式动画<br>[CATransaction setDisableActions:YES];<br>self.myview.layer.position = CGPointMake(x, y);<br>[CATransaction commit];</p>
+<p><strong>1.2 层次结构</strong></p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/23.jpg" alt=""></p>
+<p>为了将像素显示到屏幕上，图形处理将在CPU上进行。然后数据会被会传送到 GPU，再被进行一些处理。最终像素显示到屏幕上。<br>Core Animation基于Core Graphics与OpenGL。在 iOS 上，几乎所有的东西都是通过Core Animation 绘制出来。然而在OS X上，绕过Core Animation直接使用Core Graphics绘制的情况并不少见，比如一些专门的应用（尤其是游戏），直接和OpenGL/OpenGL ES交流。</p>
+<p><strong>1.3 Core Animation协议与类型</strong></p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/24.jpg" alt=""></p>
+<p>Core Animation中所有类都遵守CAMediaTiming协议。</p>
+<p>CAAnimation：所有动画对象的父类，实现CAMediaTiming协议，负责控制动画的时间、速度和时间曲线等等。它是一个抽象类，不具备动画效果，不能直接使用。</p>
+<p>CAPropertyAnimation ：CAAnimation的子类，支持动画地显示图层的keyPath。它也是个抽象类，本身不具备动画效果，一般不直接使用。<br>CABasicAnimation：基本动画，做一些简单效果。<br>CAKeyframeAnimation：帧动画，做一些连续的流畅的动画。<br>CASpringAnimation：弹簧效果动画，是CABasicAnimation的子类，为iOS9.0之后新增。</p>
+<p>CAAnimationGroup：动画组，可以同时进行缩放、旋转等多个动画。<br>CATransition：转场动画，界面之间跳转、切换都可以用转场动画。</p>
+<p><strong>1.4 其他</strong><br>1、CALayer、UIview的区别<br>虽然CALayer能做出跟UIView一样的界面效果，但两者之间的差别在于对于事件处理的功能的支持。<br>CALayer：不能处理用户的触摸事件。性能较高，更加轻量级。<br>UIView：可以处理用户的触摸事件。<br>因此，如果显示出来的东西需要跟用户进行交互的话，需要使用UIView。否则，用UIView/CALayer均可。</p>
+<p>2、CALayer不能直接使用UIColor/UIImage，只能使用CGColor/CIImage等<br>CALayer是定义在QuartzCore框架中的，CGColor/CIImage等数据类型是定义在CoreGraphics框架中的，而UIColor和UIImage是定义在UIKit框架中的。<br>而QuartzCore框架和CoreGraphics框架是可以跨平台使用的，UIKit却只能在iOS中使用。<br>所以，为了保证可移植性，QuartzCore不能使用UIColor/UIImage，只能使用CGColor/CIImage。</p>
+<h4 id="2-使用方法"><a href="#2-使用方法" class="headerlink" title="2 使用方法"></a>2 使用方法</h4><p><strong>1、CABasicAnimation</strong><br>提供最基础的动画属性设置，完成简单动画效果，比如位置从A点到B点的改变。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/25.jpg" alt=""></p>
+<p><strong>2、CAKeyframeAnimation</strong><br>允许设置一个特定的数组，这个数组是动画在运动时的值。类似Flash动画里的关键帧。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/26.jpg" alt=""></p>
+<p><strong>3、CATransition</strong><br>通过设置type和subtype实现简单的过渡动画。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/27.jpg" alt=""></p>
+<p><strong>4、CAAnimationGroup</strong><br>将多个动画合并一起加入到层中，所有动画并发执行，可以方便地实现需要多种类型动画的场景。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/28.jpg" alt=""></p>
+<h5 id="3-总结"><a href="#3-总结" class="headerlink" title="3 总结"></a>3 总结</h5><p>由上可见，Core Animation中可以直接使用的类有：<br>CABasicAnimation<br>CAKeyframeAnimation<br>CATransition<br>CASpringAnimation<br>CAAnimationGroup</p>
+<p>综上所述，各种类适用的场景有所不同，选择建议为：<br>CABasicAnimation：可以看做是一种CAKeyframeAnimation的简单动画，只有头尾的关键帧。用于实现简单动画。<br>CAKeyframeAnimation：关键帧动画，一般用于处理复杂路径移动等动画。<br>CATransition：多用于转场。<br>CASpringAnimation：ios9之后的弹性动画，用来实现更加生动活泼的效果。<br>CAAnimationGroup：组合动画，将各种动画组合在一起，同步展示效果。</p>
+<p>P.S.此次月报旨在对Core Animation进行简单介绍，对Core Animation的进一步解析以及UIView Animation/Core Animation对比等还待后续完成。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -127,7 +134,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://StoryTeam.cn/2016/11/30/2016-11-30-气泡抖动动画实现/" data-title="气泡抖动动画实现 | StoryTeam" data-tsina="null" class="share clearfix">
+	  <div data-url="http://StoryTeam.cn/2016/10/31/2016-10-31-CoreAnimation浅析/" data-title="CoreAnimation浅析 | StoryTeam" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -141,18 +148,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2016/11/30/2016-11-30-内存管理讨论总结/" title="内存管理讨论总结">
+ <a href="/2016/11/23/2016-11-23-踩坑与收获 copy/" title="踩坑与收获">
   <strong>上一篇</strong><br/>
   <span>
-  内存管理讨论总结</span>
+  踩坑与收获</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2016/11/23/2016-11-23-踩坑与收获 copy/"  title="踩坑与收获">
+<a href="/2016/10/31/2016-10-31-手势和touch/"  title="手势和touch">
  <strong>下一篇</strong><br/> 
- <span>踩坑与收获
+ <span>手势和touch
 </span>
 </a>
 </div>
@@ -161,7 +168,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2016/11/30/2016-11-30-气泡抖动动画实现/" data-title="气泡抖动动画实现" data-url="http://StoryTeam.cn/2016/11/30/2016-11-30-气泡抖动动画实现/"></div>
+	<div class="ds-thread" data-thread-key="2016/10/31/2016-10-31-CoreAnimation浅析/" data-title="CoreAnimation浅析" data-url="http://StoryTeam.cn/2016/10/31/2016-10-31-CoreAnimation浅析/"></div>
 </section>
 
 
@@ -171,7 +178,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Bezier曲线绘制圆形"><span class="toc-number">1.</span> <span class="toc-text">1.Bezier曲线绘制圆形</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-使用阻尼振动来模拟气泡的抖动过程"><span class="toc-number">2.</span> <span class="toc-text">2.使用阻尼振动来模拟气泡的抖动过程</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-基本概念"><span class="toc-number">1.</span> <span class="toc-text">1 基本概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-使用方法"><span class="toc-number">2.</span> <span class="toc-text">2 使用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3-总结"><span class="toc-number">2.1.</span> <span class="toc-text">3 总结</span></a></li></ol></li></ol>
  
   </div>
 

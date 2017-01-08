@@ -309,9 +309,102 @@
   </entry>
   
   <entry>
+    <title>CoreAnimation浅析</title>
+    <link href="http://StoryTeam.cn/2016/10/31/2016-10-31-CoreAnimation%E6%B5%85%E6%9E%90/"/>
+    <id>http://StoryTeam.cn/2016/10/31/2016-10-31-CoreAnimation浅析/</id>
+    <published>2016-10-31T12:57:00.000Z</published>
+    <updated>2017-01-08T13:52:52.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>iOS实现动画的方式看似多种多样，其核心均依赖Core Animation。比如UIView动画([UIView AnimateWithDuration:animations:]等），实质上是对Core Animation的封装，提供简洁的动画接口。<br>下面将对Core Animation进行简单介绍。</p>
+<a id="more"></a>
+<h4 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1 基本概念"></a>1 基本概念</h4><p><strong>1.1 Core Animation性质</strong><br>Core Animation是一组非常强大的动画处理API，其有以下几点特性：<br>1、跨平台：<br>在Mac OS X平台、iOS平台上均可使用。<br>2、不阻塞主线程：<br>Core Animation的动画执行过程都是在后台操作的，因此不会阻塞主线程。<br>3、作用对象为CALayer：<br>在创建UIView对象时，UIView内部会自动创建一个图层，即CALayer对象。<br>当UIView需要显示到屏幕上时，会调用drawRect:方法进行绘图，并且会将所有内容绘制在自己的图层上，绘图完毕后，系统会将图层拷贝到屏幕上，由此完成UIView的显示。也就是说，UIView本身不具备显示的功能，是它内部的层才有显示功能。<br>而Core Animation是直接作用在CALayer上的，并非UIView。<br>4、隐式动画属性：<br>CALayer很多属性在修改时都能形成动画效果，这些效果被称为“隐式动画属性”，比如：<br>bounds：用于设置CALayer的宽度和高度。修改这个属性会产生缩放动画。<br>backgroundColor：用于设置CALayer的背景色。修改这个属性会产生背景色的渐变动画。<br>position：用于设置CALayer的位置。修改这个属性会产生平移动画。</p>
+<p>P.S.可以通过事务关闭隐式动画：<br>[CATransaction begin];<br>// 关闭隐式动画<br>[CATransaction setDisableActions:YES];<br>self.myview.layer.position = CGPointMake(x, y);<br>[CATransaction commit];</p>
+<p><strong>1.2 层次结构</strong></p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/23.jpg" alt=""></p>
+<p>为了将像素显示到屏幕上，图形处理将在CPU上进行。然后数据会被会传送到 GPU，再被进行一些处理。最终像素显示到屏幕上。<br>Core Animation基于Core Graphics与OpenGL。在 iOS 上，几乎所有的东西都是通过Core Animation 绘制出来。然而在OS X上，绕过Core Animation直接使用Core Graphics绘制的情况并不少见，比如一些专门的应用（尤其是游戏），直接和OpenGL/OpenGL ES交流。</p>
+<p><strong>1.3 Core Animation协议与类型</strong></p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/24.jpg" alt=""></p>
+<p>Core Animation中所有类都遵守CAMediaTiming协议。</p>
+<p>CAAnimation：所有动画对象的父类，实现CAMediaTiming协议，负责控制动画的时间、速度和时间曲线等等。它是一个抽象类，不具备动画效果，不能直接使用。</p>
+<p>CAPropertyAnimation ：CAAnimation的子类，支持动画地显示图层的keyPath。它也是个抽象类，本身不具备动画效果，一般不直接使用。<br>CABasicAnimation：基本动画，做一些简单效果。<br>CAKeyframeAnimation：帧动画，做一些连续的流畅的动画。<br>CASpringAnimation：弹簧效果动画，是CABasicAnimation的子类，为iOS9.0之后新增。</p>
+<p>CAAnimationGroup：动画组，可以同时进行缩放、旋转等多个动画。<br>CATransition：转场动画，界面之间跳转、切换都可以用转场动画。</p>
+<p><strong>1.4 其他</strong><br>1、CALayer、UIview的区别<br>虽然CALayer能做出跟UIView一样的界面效果，但两者之间的差别在于对于事件处理的功能的支持。<br>CALayer：不能处理用户的触摸事件。性能较高，更加轻量级。<br>UIView：可以处理用户的触摸事件。<br>因此，如果显示出来的东西需要跟用户进行交互的话，需要使用UIView。否则，用UIView/CALayer均可。</p>
+<p>2、CALayer不能直接使用UIColor/UIImage，只能使用CGColor/CIImage等<br>CALayer是定义在QuartzCore框架中的，CGColor/CIImage等数据类型是定义在CoreGraphics框架中的，而UIColor和UIImage是定义在UIKit框架中的。<br>而QuartzCore框架和CoreGraphics框架是可以跨平台使用的，UIKit却只能在iOS中使用。<br>所以，为了保证可移植性，QuartzCore不能使用UIColor/UIImage，只能使用CGColor/CIImage。</p>
+<h4 id="2-使用方法"><a href="#2-使用方法" class="headerlink" title="2 使用方法"></a>2 使用方法</h4><p><strong>1、CABasicAnimation</strong><br>提供最基础的动画属性设置，完成简单动画效果，比如位置从A点到B点的改变。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/25.jpg" alt=""></p>
+<p><strong>2、CAKeyframeAnimation</strong><br>允许设置一个特定的数组，这个数组是动画在运动时的值。类似Flash动画里的关键帧。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/26.jpg" alt=""></p>
+<p><strong>3、CATransition</strong><br>通过设置type和subtype实现简单的过渡动画。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/27.jpg" alt=""></p>
+<p><strong>4、CAAnimationGroup</strong><br>将多个动画合并一起加入到层中，所有动画并发执行，可以方便地实现需要多种类型动画的场景。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/28.jpg" alt=""></p>
+<h5 id="3-总结"><a href="#3-总结" class="headerlink" title="3 总结"></a>3 总结</h5><p>由上可见，Core Animation中可以直接使用的类有：<br>CABasicAnimation<br>CAKeyframeAnimation<br>CATransition<br>CASpringAnimation<br>CAAnimationGroup</p>
+<p>综上所述，各种类适用的场景有所不同，选择建议为：<br>CABasicAnimation：可以看做是一种CAKeyframeAnimation的简单动画，只有头尾的关键帧。用于实现简单动画。<br>CAKeyframeAnimation：关键帧动画，一般用于处理复杂路径移动等动画。<br>CATransition：多用于转场。<br>CASpringAnimation：ios9之后的弹性动画，用来实现更加生动活泼的效果。<br>CAAnimationGroup：组合动画，将各种动画组合在一起，同步展示效果。</p>
+<p>P.S.此次月报旨在对Core Animation进行简单介绍，对Core Animation的进一步解析以及UIView Animation/Core Animation对比等还待后续完成。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;iOS实现动画的方式看似多种多样，其核心均依赖Core Animation。比如UIView动画([UIView AnimateWithDuration:animations:]等），实质上是对Core Animation的封装，提供简洁的动画接口。&lt;br&gt;下面将对Core Animation进行简单介绍。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://StoryTeam.cn/categories/iOS/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>手势和touch</title>
+    <link href="http://StoryTeam.cn/2016/10/31/2016-10-31-%E6%89%8B%E5%8A%BF%E5%92%8Ctouch/"/>
+    <id>http://StoryTeam.cn/2016/10/31/2016-10-31-手势和touch/</id>
+    <published>2016-10-31T12:42:00.000Z</published>
+    <updated>2017-01-08T14:00:23.000Z</updated>
+    
+    <content type="html"><![CDATA[<h6 id="背景："><a href="#背景：" class="headerlink" title="背景："></a>背景：</h6><p>视频录制过程中，支持手势放大和缩小</p>
+<a id="more"></a>
+<h6 id="过程："><a href="#过程：" class="headerlink" title="过程："></a>过程：</h6><p>一开始觉得这个需求比较简单，不外乎加一个手势，调整一下手势的触发区域。但是在实际开发中，遇到了三个问题：<br>1 首先，缩放手势和录制按钮不在同一个view里，无法通过简单设置view.multipleTouchEnabled 来开启多点触控<br>2 缩放界面使用的是UIGestureRecognizer相关的接口，而录制按钮用的touches相关接口，这两套接口是否能完全协作 ？<br>3 缩放手势的View里还有其他两三个手势，这些手势本来就有了彼此的互斥逻辑，新的修改会不会对原本的逻辑有影响 ？</p>
+<p>对这块相关的技术不是很熟悉，不得不花了点时间，google和学习了一下相关的东西。</p>
+<p><strong>理解UITouch，UIEvent，UIGestureRecognizer以及UIResponder</strong><br>UITouch：一个触摸对象代表一根手指对屏幕的接触以及在屏幕上的移动。其生命周期从手指接触屏幕开始，到手指离开屏幕为止。</p>
+<p>手势：一个手势需要一根或多根手指完成，即一个手势包含一个或多个UITouch对象。</p>
+<p>触摸序列：用于描述手势发生时（多个）手指接触屏幕的过程。整个过程从构成手势的第一根手指接触屏幕开始，到手势进行完毕时的最后一个手指离开屏幕为止。</p>
+<p>UIEvent：代表iOS系统同外界互动时所发生的事件。有三种：触摸事件，动作事件，远程控制事件。对于触摸事件，UIEvent中保存着同当前触摸序列相关的UITouch对象。</p>
+<p>UIGestureRecognizer：用于识别特定手势。</p>
+<p>UIResponder：可以响应事件，动作消息等。多个响应对象组成响应链，从而形成完整的事件/消息响应体系。</p>
+<p>UITouch<br>UITouch是UIKit中处理用户触屏交互的底层对象。<br>每个UITouch都对应一个当前接触屏幕的手指。<br>如果手指移动，系统会不断更新UITouch的属性，例如previousLocationInView:和locationInView:。<br>在手势发生的过程中（触摸序列中），UITouch对象会被创建，被销毁，还会改变状态。例如，两个手指先后接触屏幕，而后又先后离开屏幕，在这个过程中，UITouch对象的数量会呈现1 –&gt; 2 –&gt; 1。<br>UIEvent<br>UIEvent用来代表触摸事件，可以将多个同时或近似时间发生的手指对屏幕的接触(UITouch)描述为一个整体，解读为一个特定的手势或动作。<br>UIEvent对象的生命周期也只维持在手势发生（触摸序列）期间，不要试图retain UIEvent或UITouch对象，如果需要记录它们的信息，应该复制这些信息。<br>UIGestureRecognizer<br>将其添加至视图，可以将触摸事件识别为特定的手势，如果识别成功，则调用关联的动作方法。在iOS中，一共有六种标准手势：</p>
+<p>点击<br>捏合<br>拖拽<br>滑动<br>旋转<br>长按<br>当然也可以自定义手势。</p>
+<p>UIResponder<br>让视图/控制器直接处理触摸事件，通过判定比较UITouch对象的前后状态，直接实现逻辑功能，例如绘画，拖动屏幕控件等。</p>
+<p>处理触摸事件的四个方法<br>不论是UIGestureRecognizer还是UIResponder，都利用这四个方法处理触摸事件。</p>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)<span class="string">touchesBegan:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event; <span class="comment">// 处理开始阶段的UITouch对象</span></div><div class="line"> </div><div class="line">- (<span class="keyword">void</span>)<span class="string">touchesMoved:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event; <span class="comment">// 处理移动阶段的UITouch对象</span></div><div class="line"> </div><div class="line">- (<span class="keyword">void</span>)<span class="string">touchesEnded:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event; <span class="comment">// 处理结束阶段的UITouch对象</span></div><div class="line"> </div><div class="line">- (<span class="keyword">void</span>)<span class="string">touchesCancelled:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event; <span class="comment">// 处理取消阶段的UITouch对象</span></div></pre></td></tr></table></figure>
+<p>多点触摸<br>涉及多个UITouch对象，需要比较它们前后的状态，可以使用CFDictionaryRef，将对象的地址作为键，状态（值）地址作为值，存入字典</p>
+<p>可以简单理解：<br>1 touch是比手势更底层的东西，touch经过系统的封装后，转为gesture，抛给上层<br>2 touch是view的固有方法，而gesture是touch和selector的链接点。</p>
+<p>为了简化了方便验证各种方案，单独写了个简单的demo：</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/29.jpg" alt=""></p>
+<p>通过抽象独立demo，避免每次都有启动QQ，大大节省了开发时间。</p>
+<p><strong>（原来的顺序，可以看到两个手势互相干扰）</strong></p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/30.jpg" alt=""></p>
+<p>最后通过重写了</p>
+<figure class="highlight erlang"><table><tr><td class="code"><pre><div class="line">- <span class="params">(BOOL)</span>gestureRecognizer:<span class="params">(UIGestureRecognizer *)</span>gestureRecognizer shouldReceiveTouch:<span class="params">(UITouch *)</span>touch</div><div class="line"> </div><div class="line">- <span class="params">(BOOL)</span>gestureRecognizer:<span class="params">(UIGestureRecognizer *)</span>gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:<span class="params">(UIGestureRecognizer *)</span>otherGestureRecognizer</div></pre></td></tr></table></figure>
+<p>解决了问题。<br><strong>（期望的顺序）</strong></p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/31.jpg" alt=""></p>
+<h6 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h6><p>一个View层级里手势会互相打断，比如view和subView，subsubView等，需要修改相应的手势delegate才能实现多点触控的效果<br>写独立demo来研究灭幼把握的技术点，可以大大加快开发流程，并且可以帮助过滤掉干扰。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h6 id=&quot;背景：&quot;&gt;&lt;a href=&quot;#背景：&quot; class=&quot;headerlink&quot; title=&quot;背景：&quot;&gt;&lt;/a&gt;背景：&lt;/h6&gt;&lt;p&gt;视频录制过程中，支持手势放大和缩小&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://StoryTeam.cn/categories/iOS/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>Instrument之time profiler</title>
-    <link href="http://StoryTeam.cn/2014/07/05/2014-07-05-instrumentzhi-time-profiler%20copy/"/>
-    <id>http://StoryTeam.cn/2014/07/05/2014-07-05-instrumentzhi-time-profiler copy/</id>
+    <link href="http://StoryTeam.cn/2014/07/05/2014-07-05-instrumentzhi-time-profiler/"/>
+    <id>http://StoryTeam.cn/2014/07/05/2014-07-05-instrumentzhi-time-profiler/</id>
     <published>2014-07-05T10:31:36.000Z</published>
     <updated>2017-01-08T04:56:52.000Z</updated>
     
