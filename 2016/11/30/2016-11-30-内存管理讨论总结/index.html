@@ -1,0 +1,498 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="baidu-site-verification" content="vqJV77bZM6" />
+  
+    <title>内存管理讨论总结 | StoryTeam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="StoryTeam">
+    
+
+    <meta name="keywords" content="生活,笔记,经验,分享">
+    <meta name="applicable-device" content="pc,mobile">
+    <meta name="description" content="1 内存管理的分类　　GC（Garbage Collection，垃圾回收）是一种自动的内存管理机制：将不再使用或者没有任何指针指向的内存空间收集起来，以便再次利用。相较于人肉管理内存，GC更为简单、安全，也更容易被理解。GC的方法主要可以分为两大类：基于引用计数（Reference Counting）的垃圾回收器、基于跟踪处理（Tracing）的垃圾回收器。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存管理讨论总结">
+<meta property="og:url" content="http://StoryTeam.cn/2016/11/30/2016-11-30-内存管理讨论总结/index.html">
+<meta property="og:site_name" content="StoryTeam">
+<meta property="og:description" content="1 内存管理的分类　　GC（Garbage Collection，垃圾回收）是一种自动的内存管理机制：将不再使用或者没有任何指针指向的内存空间收集起来，以便再次利用。相较于人肉管理内存，GC更为简单、安全，也更容易被理解。GC的方法主要可以分为两大类：基于引用计数（Reference Counting）的垃圾回收器、基于跟踪处理（Tracing）的垃圾回收器。">
+<meta property="og:updated_time" content="2017-01-08T06:03:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="内存管理讨论总结">
+<meta name="twitter:description" content="1 内存管理的分类　　GC（Garbage Collection，垃圾回收）是一种自动的内存管理机制：将不再使用或者没有任何指针指向的内存空间收集起来，以便再次利用。相较于人肉管理内存，GC更为简单、安全，也更容易被理解。GC的方法主要可以分为两大类：基于引用计数（Reference Counting）的垃圾回收器、基于跟踪处理（Tracing）的垃圾回收器。">
+
+    
+    <link rel="alternative" href="/atom.xml" title="StoryTeam" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon_new.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/logo_new.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/logo_new.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="StoryTeam">StoryTeam</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		
+  <header class="article-info clearfix">
+    <h1 itemprop="name">
+      
+        <a href="/2016/11/30/2016-11-30-内存管理讨论总结/" target="_blank" title="内存管理讨论总结" itemprop="url">内存管理讨论总结</a>
+    </h1>
+    <p class="article-time">
+      <time datetime="2016-11-30T13:03:00.000Z" itemprop="datePublished">2016-11-30</time>
+      <span class="toc-text">da</span>
+      <span style="margin-left: 0.5em;"><i class="icon-eye-open"></i> <span class="viewcount"></span></span>
+    </p>
+  </header>
+
+	<div class="article-content">
+		
+		<h4 id="1-内存管理的分类"><a href="#1-内存管理的分类" class="headerlink" title="1 内存管理的分类"></a>1 内存管理的分类</h4><p>　　GC（Garbage Collection，垃圾回收）是一种自动的内存管理机制：将不再使用或者没有任何指针指向的内存空间收集起来，以便再次利用。相较于人肉管理内存，GC更为简单、安全，也更容易被理解。<br>GC的方法主要可以分为两大类：基于引用计数（Reference Counting）的垃圾回收器、基于跟踪处理（Tracing）的垃圾回收器。</p>
+<a id="more"></a>
+<h5 id="1-1-基于引用计数的垃圾回收器"><a href="#1-1-基于引用计数的垃圾回收器" class="headerlink" title="1.1 基于引用计数的垃圾回收器"></a>1.1 基于引用计数的垃圾回收器</h5><p>  引用计数是将资源（对象/内存/磁盘空间等等）的被引用次数保存起来，当被引用次数变为0时就将其释放的方法。<br>  a.优点：<br>  ·简单。<br>  ·快速：由于计数的增减与对象的使用是紧密结合的，与其他垃圾回收算法相比，该方法不会造成程序暂停，对程序需要不被长时间打断的实时环境比较有利。<br>  b.缺点：<br>  ·循环引用：下文3.1循环引用中有详细介绍。</p>
+<h5 id="1-2-基于跟踪处理的垃圾回收器"><a href="#1-2-基于跟踪处理的垃圾回收器" class="headerlink" title="1.2 基于跟踪处理的垃圾回收器"></a>1.2 基于跟踪处理的垃圾回收器</h5><p>相比于引用计数，跟踪处理的垃圾回收机制被更为广泛的应用。其基本方法是由离散数学中的图论产生跟踪对象的关系图，然后进行垃圾回收。<br>使用跟踪方式的垃圾回收算法主要有以下几种：</p>
+<p>1、标记-清除（Mark-Sweep）<br>该方法使用根搜索算法：程序把所有的引用关系看作一张图，从根节点开始，遍历整张图，标记所有被引用的节点。遍历完成后，所有未标记的节点会被当做无用节点，将在清扫阶段被释放。<br>  a.优点：<br>·高效：该算法不需要进行对象的移动，并且仅对不存活的对象进行处理，在存活对象比较多的情况下极为高效。<br>b.缺点：<br>·内存碎片化：正是因为该算法直接回收不存活的对象，在高效率的同时会造成大量的内存碎片。</p>
+<p>2、标记-整理（Mark-Compact）<br>该算法标记的方法与标记-清除法一致，只是在遍历所有被引用节点并进行标记之后，会将所有的标记节点往左端空闲空间移动，并更新对应的指针。这就解决了内存碎片的问题。<br>a.优点：<br>·解决了内存碎片化问题。<br>b.缺点：<br>·成本高：该算法在标记-清除算法的基础上，又进行了对象的移动，因此成本更高。<br>·句柄开销：需要使用句柄和句柄表。</p>
+<p>3、标记-拷贝（Mark-Copy）<br>该算法将堆空间分为两个部分：对象面、空闲面。系统从对象面的堆空间里面分配内存，当对象面分配满时，从根节点扫描所有被引用对象，将其复制到空闲面并保证所有被引用对象所占用的内存是连续的。如此，对象面的堆空间里剩下的全是垃圾。而空闲面里的对象都是紧密排列的。接下来转换对象面和空闲面的角色，继续从新的对象面中开始分配。<br>a.优点：<br>·解决了内存碎片化问题。<br>·避免了标记-整理法的句柄开销。<br>b.缺点：<br>·在对象面与空闲区域面的切换过程中，程序暂停执行。</p>
+<h4 id="2-OC的内存管理"><a href="#2-OC的内存管理" class="headerlink" title="2 OC的内存管理"></a>2 OC的内存管理</h4><p>  OC内存管理有三种方式，按由旧到新顺序排列分别：自动垃圾收集（Automatic Garbage Collection）、手动引用计数器（Manual Reference Counting）和自动释放池（Autorelease Pool）、自动引用计数器（Automatic Reference Counting）。</p>
+<h5 id="2-1-AGC（自动垃圾收集）"><a href="#2-1-AGC（自动垃圾收集）" class="headerlink" title="2.1 AGC（自动垃圾收集）"></a>2.1 AGC（自动垃圾收集）</h5><p>  AGC是一种自动垃圾收集的内存管理形式，本质也是引用计数，但并不在对象计数为0时立即将其释放，而是等到某一特定时刻统一释放回收内存。由于回收时机的不确定性，且需要一定时间处理回收，此方法较容易产生卡顿。<br>  iOS运行环境中从来不支持AGC，在OS X较早版本中才使用AGC，V10.8及之后版本也已将其弃用此方法，转而推荐使用ARC进行替代。</p>
+<h5 id="2-2-MRC（手动引用计数）和Autorelease-Pool（自动释放池）"><a href="#2-2-MRC（手动引用计数）和Autorelease-Pool（自动释放池）" class="headerlink" title="2.2 MRC（手动引用计数）和Autorelease Pool（自动释放池）"></a>2.2 MRC（手动引用计数）和Autorelease Pool（自动释放池）</h5><p>1、MRC<br>MRC是通过人为控制来增减引用计数的方式。将一个对象指针赋值给另一个对象指针如下：<br>    Person p1 = [Person new];<br>    Person p2 = [Person new];<br>// 在p2失去对对象的控制权前需要先release<br>    [p2 release];<br>// 再进行赋值操作<br>    p2 = p1;</p>
+<p>2、Autorelease Pool<br>Autorelease即自动释放对象，不需要手动释放。在Autorelease Pool内的对象在创建时只需调用autorelease方法，编译器将在最后完成在该池子内对象的release方法。<br>Autorelease Pool的创建方式为：<br>    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]  init];<br>    [pool release];<br>其语法糖形式为：<br>    @autoreleasepool{<br>    }</p>
+<h5 id="2-3-ARC（自动引用计数）"><a href="#2-3-ARC（自动引用计数）" class="headerlink" title="2.3 ARC（自动引用计数）"></a>2.3 ARC（自动引用计数）</h5><p>  ARC是由编译器来自动完成对象引用计数器控制的方式。将一个对象指针赋值给另一个对象指针，只需要直接进行赋值即可：<br>    Person p1 = [Person new];<br>    Person p2 = [Person new];<br>// 直接进行赋值操作<br>    p2 = p1;</p>
+<h3 id="3-内存泄漏"><a href="#3-内存泄漏" class="headerlink" title="3 内存泄漏"></a>3 内存泄漏</h3><p>内存泄漏是指应用程序分配某段内存后，发生某些错误，导致在释放该段内存之前就失去了对该段内存的控制，未能释放已经不再使用的内存，从而造成了内存的浪费。</p>
+<h5 id="3-1-循环引用"><a href="#3-1-循环引用" class="headerlink" title="3.1 循环引用"></a>3.1 循环引用</h5><p>1、产生原因<br>对于两个类A、B，在A包含B且B包含A的情况下，产生循环：<br>// Book1类的声明和实现<br>    @interface Book1:NSObject<br>    @property(nonatomic,retain) Book2 *_book2;<br>    (void)dealloc；<br>    @end<br>    @implementation Book1</p>
+<p>// 重载dealloc方法销毁对象<br>    (void)dealloc<br>    {<br>        [_book2 release];<br>        [super dealloc];<br>    }<br>    @end</p>
+<p>// Book2类的声明和实现<br>    @interface Book2:NSObject<br>    @property(nonatomic,retain) Book1 *_book1;<br>    (void)dealloc；<br>    @end<br>    @implementation Book2</p>
+<p>// 重载dealloc方法销毁对象<br>    (void)dealloc<br>    {<br>        [_book1 release];<br>        [super dealloc];<br>    }<br>    @end</p>
+<p>// 主函数测试<br>    void main()<br>    {<br>        Book1 <em>b1=[[Book1 alloc] init];<br>        Book2 </em>b2=[[Book2 alloc] init];<br>        b1.book2 = b2;<br>        b2.book1 = b1;<br>        [b1 release];<br>        [b2 release];<br>    }<br>  当执行<code>[b1 release]</code>后，b1释放对Book1的控制权，此时Book1的引用计数器RC=2-1=1。<br>  当执行<code>[b2 release]</code>后，b2释放对Book2的控制权，此时Book2的引用计数器RC=2-1=1。<br>此时由于仍有指针指向Book1和Book2，系统并不会调用dealloc函数，因此Book1和Book2并不会毁销，就造成了内存泄露。</p>
+<p>2、解决方法<br>要解决循环引用造成的内存泄漏，MRC中需要在Book1和Book2的@property属性声明中一端使用retain，一端使用assign。ARC中需要一端使用strong，一端使用weak。</p>
+<h5 id="3-2-返回值释放"><a href="#3-2-返回值释放" class="headerlink" title="3.2 返回值释放"></a>3.2 返回值释放</h5><p>1、产生原因<br>MRC中，在返回对象的方法里，如果将新创建的对象作为返回值，由于在返回该对象之前并不能释放该对象，将会造成内存泄漏。ARC中无此问题。</p>
+<p>2、解决方法：<br>使用自动释放池释放对象，通过自动释放池来延迟该对象的释放：<br>    (Person <em>)getNewPerson<br>    {<br>        Person p</em> = [[[Person alloc] init] autorelease];<br>        …<br>        return p;<br>    }<br>或者<br>    {<br>        Person p* = [[Person alloc] init] ;<br>        …<br>        return [p autorelease];<br>    }。</p>
+<h5 id="3-3-setter重写"><a href="#3-3-setter重写" class="headerlink" title="3.3 setter重写"></a>3.3 setter重写</h5><p>1、产生原因<br>MRC中，若重写setter方法，将对象直接赋给另一对象，将无法调用自动合成方法，旧值没有release，有可能造成内存泄露。</p>
+<p>2、解决方法<br>手动retain新值，release旧值：<br>    (void)setBook:(Book *)book<br>    {<br>        if (_book != book)<br>    {<br>          // 使之前对象的RC-1<br>              [_book release];<br>              // 当前引用的RC+1<br>              _book = [book retain];<br>        }<br>    }</p>
+<h4 id="4-总结"><a href="#4-总结" class="headerlink" title="4 总结"></a>4 总结</h4><p>为避免MRC/ARC中的内存泄漏，应注意如下几个方面：<br>·注意野指针问题，避免其引起的crash。<br>·保证所有类均有走dealloc被成功析构。<br>·每写完一个类查看内存增长情况。<br>·尽量使用显式destroy自己控制对象释放。<br>·提高意识，牢记宗旨——谁创建，谁释放。<br>·借助工具检查内存泄漏情况，如：<br>a.编译选项中，启用Zombie Objects，可在访问/释放已被释放的对象时报警，避免野指针。<br>b.使用Analyze/Instrument等扫描内存泄漏。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://StoryTeam.cn/2016/11/30/2016-11-30-内存管理讨论总结/" data-title="内存管理讨论总结 | StoryTeam" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/11/30/2016-11-30-最简单的拍摄原型研究/" title="最简单的拍摄原型研究">
+  <strong>上一篇</strong><br/>
+  <span>
+  最简单的拍摄原型研究</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/11/30/2016-11-30-气泡抖动动画实现/"  title="气泡抖动动画实现">
+ <strong>下一篇</strong><br/> 
+ <span>气泡抖动动画实现
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/11/30/2016-11-30-内存管理讨论总结/" data-title="内存管理讨论总结" data-url="http://StoryTeam.cn/2016/11/30/2016-11-30-内存管理讨论总结/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-内存管理的分类"><span class="toc-number">1.</span> <span class="toc-text">1 内存管理的分类</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-1-基于引用计数的垃圾回收器"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 基于引用计数的垃圾回收器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-2-基于跟踪处理的垃圾回收器"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 基于跟踪处理的垃圾回收器</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-OC的内存管理"><span class="toc-number">2.</span> <span class="toc-text">2 OC的内存管理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-1-AGC（自动垃圾收集）"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 AGC（自动垃圾收集）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-MRC（手动引用计数）和Autorelease-Pool（自动释放池）"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 MRC（手动引用计数）和Autorelease Pool（自动释放池）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-3-ARC（自动引用计数）"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 ARC（自动引用计数）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-内存泄漏"><span class="toc-number"></span> <span class="toc-text">3 内存泄漏</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3-1-循环引用"><span class="toc-number">0.1.</span> <span class="toc-text">3.1 循环引用</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-2-返回值释放"><span class="toc-number">0.2.</span> <span class="toc-text">3.2 返回值释放</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-3-setter重写"><span class="toc-number">0.3.</span> <span class="toc-text">3.3 setter重写</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-总结"><span class="toc-number">1.</span> <span class="toc-text">4 总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/其它/" title="其它">其它<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://developer.apple.com" target="_blank" title="官方开发者">官方开发者</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer>
+
+
+<div id="footer" >
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/https://github.com/StoryTeam" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:SNG_StoryTeam@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="StoryTeam">StoryTeam</a>
+		
+		</p>
+</div>
+<img src="/img/logo_new.jpg" style="position: fixed; top: -9999px;height: 500px;width: 500px;">
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+<script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+<script src="/js/mm.js"></script>
+<script src="/js/subscribe.js"></script>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+  
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"StoryTeam"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+<!--
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+-->
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="baidu-site-verification" content="vqJV77bZM6" />
   
-    <title>关于 | StoryTeam</title>
+    <title>踩坑与收获 | StoryTeam</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="StoryTeam">
@@ -13,19 +13,21 @@
 
     <meta name="keywords" content="生活,笔记,经验,分享">
     <meta name="applicable-device" content="pc,mobile">
-    <meta name="description" content="关于日迹团队
-成员">
+    <meta name="description" content="一、先说说踩坑在做一个透明动画时，view的透明度从0到1在到0，所以view的初始透明度设为0，同时这个view要接受点击事件，于是在view上面加了手势事件，这时问题就出现了。UIVIEW在透明度为0时是不会接收手势事件的，写了个demo验证，确实是这样，透明度为0和隐藏view是一样的，所以手势没有用。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="关于">
-<meta property="og:url" content="http://StoryTeam.cn/2014/07/06/about/index.html">
+<meta property="og:title" content="踩坑与收获">
+<meta property="og:url" content="http://StoryTeam.cn/2016/11/23/2016-11-23-踩坑与收获 copy/index.html">
 <meta property="og:site_name" content="StoryTeam">
-<meta property="og:description" content="关于日迹团队
-成员">
-<meta property="og:updated_time" content="2017-01-08T03:32:27.000Z">
+<meta property="og:description" content="一、先说说踩坑在做一个透明动画时，view的透明度从0到1在到0，所以view的初始透明度设为0，同时这个view要接受点击事件，于是在view上面加了手势事件，这时问题就出现了。UIVIEW在透明度为0时是不会接收手势事件的，写了个demo验证，确实是这样，透明度为0和隐藏view是一样的，所以手势没有用。">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/image001.png">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/image003.png">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/image005.png">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/image007.png">
+<meta property="og:updated_time" content="2017-01-08T04:56:15.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="关于">
-<meta name="twitter:description" content="关于日迹团队
-成员">
+<meta name="twitter:title" content="踩坑与收获">
+<meta name="twitter:description" content="一、先说说踩坑在做一个透明动画时，view的透明度从0到1在到0，所以view的初始透明度设为0，同时这个view要接受点击事件，于是在view上面加了手势事件，这时问题就出现了。UIVIEW在透明度为0时是不会接收手势事件的，写了个demo验证，确实是这样，透明度为0和隐藏view是一样的，所以手势没有用。">
+<meta name="twitter:image" content="http://ojfz9611q.bkt.clouddn.com/image001.png">
 
     
     <link rel="alternative" href="/atom.xml" title="StoryTeam" type="application/atom+xml">
@@ -72,13 +74,40 @@
       <div id="main" class="post" itemscope itemprop="blogPost">
   
 	<article itemprop="articleBody"> 
+		
+  <header class="article-info clearfix">
+    <h1 itemprop="name">
+      
+        <a href="/2016/11/23/2016-11-23-踩坑与收获 copy/" target="_blank" title="踩坑与收获" itemprop="url">踩坑与收获</a>
+    </h1>
+    <p class="article-time">
+      <time datetime="2016-11-23T07:55:00.000Z" itemprop="datePublished">2016-11-23</time>
+      <span class="toc-text">justin</span>
+      <span style="margin-left: 0.5em;"><i class="icon-eye-open"></i> <span class="viewcount"></span></span>
+    </p>
+  </header>
+
 	<div class="article-content">
 		
-		<h2 id="关于"><a href="#关于" class="headerlink" title="关于"></a>关于</h2><p>日迹团队</p>
-<h2 id="成员"><a href="#成员" class="headerlink" title="成员"></a>成员</h2>  
+		<h3 id="一、先说说踩坑"><a href="#一、先说说踩坑" class="headerlink" title="一、先说说踩坑"></a>一、先说说踩坑</h3><p>在做一个透明动画时，view的透明度从0到1在到0，所以view的初始透明度设为0，同时这个view要接受点击事件，于是在view上面加了手势事件，这时问题就出现了。UIVIEW在透明度为0时是不会接收手势事件的，写了个demo验证，确实是这样，透明度为0和隐藏view是一样的，所以手势没有用。</p>
+<a id="more"></a>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/image001.png" alt=""></p>
+<h3 id="二、收获"><a href="#二、收获" class="headerlink" title="二、收获"></a>二、收获</h3><h5 id="1-如何判断野指针"><a href="#1-如何判断野指针" class="headerlink" title="1.如何判断野指针"></a>1.如何判断野指针</h5><p><code>&lt;malloc/malloc.h&gt;</code>中包含内存分配的一些函数和结构体，其中<code>malloc_zone_from_ptr</code>函数可以获取这个指针是否已经分配空间，如果是NULL的话，说明指针并没有指向任何可用区域，那么就不因该使用它去调用任何方法即野指针。使用<code>if(malloc_zone_from_ptr(object))</code>即可判断野指针。</p>
+<p>下面是<code>malloc_zone_from_ptr</code>的源码，在内存分配时（alloc，new, copy），系统会把分配的内存记录在一个叫<code>malloc_zones[]</code>的数组中，<code>malloc_zone_from_ptr</code>做的就是遍历这个数组，查看指针指向的地址是否在分配的内存中，如果有就返回大小，没有就返回NULL。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/image003.png" alt=""><br><img src="http://ojfz9611q.bkt.clouddn.com/image005.png" alt=""></p>
+<p>源码地址：<a href="https://opensource.apple.com/source/libmalloc/libmalloc-53.1.1/src/malloc.c" target="_blank" rel="external">https://opensource.apple.com/source/libmalloc/libmalloc-53.1.1/src/malloc.c</a></p>
+<h5 id="2-屏幕打印log"><a href="#2-屏幕打印log" class="headerlink" title="2.屏幕打印log"></a>2.屏幕打印log</h5><p>偶然看到一个好用的屏幕打印组建，实现很轻，才100多行代码，效果也不错，可以用来把数据上报打印出来，手q已经有了类似功能</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/image007.png" alt=""></p>
+<p>git地址：<a href="https://github.com/DaiYue/HAMLogOutputWindow" target="_blank" rel="external">https://github.com/DaiYue/HAMLogOutputWindow</a></p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
 
 
 </div>
@@ -87,7 +116,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://StoryTeam.cn/2014/07/06/about/" data-title="关于 | StoryTeam" data-tsina="null" class="share clearfix">
+	  <div data-url="http://StoryTeam.cn/2016/11/23/2016-11-23-踩坑与收获 copy/" data-title="踩坑与收获 | StoryTeam" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -96,9 +125,32 @@
 </footer>
 
    	       
-	</article>	
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/11/30/2016-11-30-气泡抖动动画实现/" title="气泡抖动动画实现">
+  <strong>上一篇</strong><br/>
+  <span>
+  气泡抖动动画实现</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/07/05/2014-07-05-instrumentzhi-time-profiler copy/"  title="Instrument之time profiler">
+ <strong>下一篇</strong><br/> 
+ <span>Instrument之time profiler
+</span>
+</a>
+</div>
+
+</nav>
+
+	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2014/07/06/about/" data-title="关于" data-url="http://StoryTeam.cn/2014/07/06/about/"></div>
+	<div class="ds-thread" data-thread-key="2016/11/23/2016-11-23-踩坑与收获 copy/" data-title="踩坑与收获" data-url="http://StoryTeam.cn/2016/11/23/2016-11-23-踩坑与收获 copy/"></div>
 </section>
 
 
@@ -108,7 +160,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#关于"><span class="toc-number">1.</span> <span class="toc-text">关于</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#成员"><span class="toc-number">2.</span> <span class="toc-text">成员</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、先说说踩坑"><span class="toc-number">1.</span> <span class="toc-text">一、先说说踩坑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、收获"><span class="toc-number">2.</span> <span class="toc-text">二、收获</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-如何判断野指针"><span class="toc-number">2.0.1.</span> <span class="toc-text">1.如何判断野指针</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-屏幕打印log"><span class="toc-number">2.0.2.</span> <span class="toc-text">2.屏幕打印log</span></a></li></ol></li></ol></li></ol>
  
   </div>
 
@@ -122,7 +174,11 @@
 		<ul>
 		
 		  
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>1</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/其它/" title="其它">其它<sup>1</sup></a></li>
 		  
 		
 		</ul>

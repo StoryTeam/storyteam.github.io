@@ -1,0 +1,514 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="baidu-site-verification" content="vqJV77bZM6" />
+  
+    <title>最简单的拍摄原型研究 | StoryTeam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="StoryTeam">
+    
+
+    <meta name="keywords" content="生活,笔记,经验,分享">
+    <meta name="applicable-device" content="pc,mobile">
+    <meta name="description" content="最近在关注拍摄卡顿的问题，由于拍摄相关逻辑非常多，直接研究会有比较大的困难，于是尝试搭建一个最简单的原型。一个是为了理解相关的机制，另一方面，也可以看看最少逻辑的情况下，卡顿会到怎样的程度。这里分为两个部分，操作摄像头，还有渲染出捕获的图像。（暂且只研究拍摄，存储与压缩不涉及）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="最简单的拍摄原型研究">
+<meta property="og:url" content="http://StoryTeam.cn/2016/11/30/2016-11-30-最简单的拍摄原型研究/index.html">
+<meta property="og:site_name" content="StoryTeam">
+<meta property="og:description" content="最近在关注拍摄卡顿的问题，由于拍摄相关逻辑非常多，直接研究会有比较大的困难，于是尝试搭建一个最简单的原型。一个是为了理解相关的机制，另一方面，也可以看看最少逻辑的情况下，卡顿会到怎样的程度。这里分为两个部分，操作摄像头，还有渲染出捕获的图像。（暂且只研究拍摄，存储与压缩不涉及）。">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/20.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/22.jpg">
+<meta property="og:updated_time" content="2017-01-08T06:56:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="最简单的拍摄原型研究">
+<meta name="twitter:description" content="最近在关注拍摄卡顿的问题，由于拍摄相关逻辑非常多，直接研究会有比较大的困难，于是尝试搭建一个最简单的原型。一个是为了理解相关的机制，另一方面，也可以看看最少逻辑的情况下，卡顿会到怎样的程度。这里分为两个部分，操作摄像头，还有渲染出捕获的图像。（暂且只研究拍摄，存储与压缩不涉及）。">
+<meta name="twitter:image" content="http://ojfz9611q.bkt.clouddn.com/20.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="StoryTeam" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon_new.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/logo_new.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/logo_new.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="StoryTeam">StoryTeam</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		
+  <header class="article-info clearfix">
+    <h1 itemprop="name">
+      
+        <a href="/2016/11/30/2016-11-30-最简单的拍摄原型研究/" target="_blank" title="最简单的拍摄原型研究" itemprop="url">最简单的拍摄原型研究</a>
+    </h1>
+    <p class="article-time">
+      <time datetime="2016-11-30T15:51:00.000Z" itemprop="datePublished">2016-11-30</time>
+      <span class="toc-text">stack</span>
+      <span style="margin-left: 0.5em;"><i class="icon-eye-open"></i> <span class="viewcount"></span></span>
+    </p>
+  </header>
+
+	<div class="article-content">
+		
+		<p>最近在关注拍摄卡顿的问题，由于拍摄相关逻辑非常多，直接研究会有比较大的困难，于是尝试搭建一个最简单的原型。一个是为了理解相关的机制，另一方面，也可以看看最少逻辑的情况下，卡顿会到怎样的程度。<br>这里分为两个部分，操作摄像头，还有渲染出捕获的图像。（暂且只研究拍摄，存储与压缩不涉及）。</p>
+<a id="more"></a>
+<h4 id="1-摄像头"><a href="#1-摄像头" class="headerlink" title="1. 摄像头"></a>1. 摄像头</h4><p>翻了iOS编程的所有层级，我以为会找到底层的C风格的接口，没有找到。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/20.jpg" alt="(img)"></p>
+<p>如图，CoreVideo和CoreMedia其实并没有提供直接操作摄像头的接口，仅仅是一些基本的数据结构和支撑性的公共类，更像是一个公共库。曾经找到一个比较底层的接口，ICCameraDevice，但这个接口仅在MacOS上才提供。也翻了一些网上的资料，确认在iOS系统上，最底层的接口，就是AV Fondation所提供的接口。</p>
+<p>摄像头的编程模型，就是一个生产者与消费者的模型，摄像头捕捉图像，输出到一个队列，预览窗口从队列里面获取图像，展示在窗口上。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/22.jpg" alt="(img)"></p>
+<p>仅从图像数据获取，主要有5个主要的对象</p>
+<ol>
+<li>AVCaptureDevice     设备，用于控制设备的相关特性，比如闪光灯，对焦方式，自动曝光等。</li>
+<li>AVCaptureDeviceInput 设备的输入对象，这个类几乎没有什么方法，是专门用于和Session配合的类。</li>
+<li>AVCaptureSession Session是一个总的协调者，输入的输入和输出就通过Session来联系。启动与停止也是由Session来控制的。</li>
+<li>AVCaptureConnection    连接，连接Input和Output，可以设置摄像头方向，最大帧率等，在最简单的模式下，这个并不是必须的，包含在CaptureSession里面了。</li>
+<li>AVCaptureVideoDataOutput 数据的输出对象，可以拿到原始的图像数据。<br>使用这些类并不复杂，需要按照一定的流程，首先，我们需要获得一个device</li>
+</ol>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><div class="line">- (<span class="built_in">AVCaptureDevice</span>*)getBackCamera</div><div class="line">&#123;</div><div class="line">    <span class="built_in">NSArray</span>* devices = [<span class="built_in">AVCaptureDevice</span> devicesWithMediaType:<span class="built_in">AVMediaTypeVideo</span>];</div><div class="line">    <span class="keyword">for</span> (<span class="built_in">AVCaptureDevice</span>* device <span class="keyword">in</span> devices)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">if</span> (device.position == <span class="built_in">AVCaptureDevicePositionBack</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="keyword">return</span> device;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">   </div><div class="line">    <span class="keyword">return</span> <span class="literal">nil</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>代码不算特别严谨，这个方法返回一个后置摄像头。<br>然后用它来初始化一个deviceInput对象</p>
+<figure class="highlight sqf"><table><tr><td class="code"><pre><div class="line"><span class="variable">_deviceInput</span> = [AVCaptureDeviceInput deviceInputWithDevice:<span class="variable">_device</span> error:<span class="literal">nil</span>];</div></pre></td></tr></table></figure>
+<p>然后再初始化session对象</p>
+<figure class="highlight sqf"><table><tr><td class="code"><pre><div class="line"><span class="variable">_captureSession</span> = [[AVCaptureSession alloc] init];</div><div class="line"><span class="keyword">if</span> ([<span class="variable">_captureSession</span> canAddInput:<span class="variable">_deviceInput</span>])</div><div class="line"> &#123;</div><div class="line">	 [<span class="variable">_captureSession</span> addInput:<span class="variable">_deviceInput</span>];</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>然后就可以创建output对象了</p>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)initVideoOutput</div><div class="line">&#123;</div><div class="line">    _videoOutput = [[AVCaptureVideoDataOutput alloc] init];</div><div class="line">    [_videoOutput <span class="string">setSampleBufferDelegate:</span>(self) <span class="string">queue:</span>dispatch_queue_create(<span class="string">"sample buffer queue"</span>, DISPATCH_QUEUE_SERIAL)];</div><div class="line">    <span class="keyword">if</span> ([_captureSession <span class="string">canAddOutput:</span>_videoOutput])</div><div class="line">    &#123;</div><div class="line">        [_captureSession <span class="string">addOutput:</span>_videoOutput];</div><div class="line">    &#125;</div><div class="line">   </div><div class="line">    AVCaptureConnection* connection = [_videoOutput <span class="string">connectionWithMediaType:</span>AVMediaTypeVideo];</div><div class="line">    [connection <span class="string">setVideoOrientation:</span>AVCaptureVideoOrientationPortrait];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>注意这里需要一个Serial Queue，因为每帧必须保证按顺序处理。<br>还有通过Connection对象设置图像的方向，是因为默认情况下，竖着拍你会发现图像旋转了90度，这里设置以后才能看见正常的图像。<br>通过output可以设置AVCaptureVideoDataOutputSampleBufferDelegate，这个delegate可以把原始的图像数据给出来。有两个方法:</p>
+<figure class="highlight erlang"><table><tr><td class="code"><pre><div class="line">-  <span class="params">(void)</span>captureOutput:<span class="params">(AVCaptureOutput *)</span>captureOutput didOutputSampleBuffer:<span class="params">(CMSampleBufferRef)</span>sampleBuffer fromConnection:<span class="params">(AVCaptureConnection *)</span>connection</div><div class="line">-  <span class="params">(void)</span>captureOutput:<span class="params">(AVCaptureOutput *)</span>captureOutput didDropSampleBuffer:<span class="params">(CMSampleBufferRef)</span>sampleBuffer fromConnection:<span class="params">(AVCaptureConnection *)</span>connection</div></pre></td></tr></table></figure>
+<p>一个是帧数据回调，一个是丢帧回调。<br>CMSampleBufferRef就是原始的图像数据，接下来，就是考虑如何把图像展示出来。只要速度够快（按30帧算，每帧处理不能超过33ms）。对于上面的回调来说，如果一个回调的处理时间超过了33ms，就可能导致画面的延迟，如果时间再长，或者几次都比较长，累积下来就会导致丢帧。<br>之前卡顿有个结论就是CPU高会导致丢帧，而根本原因是CPU繁忙导致每帧的处理时间变长，累积以后导致丢帧。如果让这里的处理时间足够短，比如在不使用挂件的情况下，尽可能降低这里的逻辑执行，那么即使第一次启动可能也可以保持帧率的流畅。<br>AVFondation提供了一个好用的封装类，AVCaptureVideoPreviewLayer，使用起来非常非常的简单。</p>
+<figure class="highlight mipsasm"><table><tr><td class="code"><pre><div class="line">- (void)<span class="keyword">displayUsePreviewLayer</span></div><div class="line">&#123;</div><div class="line">    _previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:_captureSession]<span class="comment">;</span></div><div class="line">    _previewLayer.frame = self.view.frame<span class="comment">;</span></div><div class="line">    [self.view.layer <span class="keyword">addSublayer:_previewLayer];</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>用Session初始化一下，直接添加一个layer就搞定。而且还可以自动纠正图像的方向。<br>在Demo的代码里面，</p>
+<figure class="highlight abnf"><table><tr><td class="code"><pre><div class="line">//[self displayUsePreviewLayer]<span class="comment">;</span></div><div class="line">[self displayUseGLView]<span class="comment">;</span></div></pre></td></tr></table></figure>
+<p>使用上面的方法，就可以直接使用PreviewLayer了。然后我使用这种方法试了下，在第一次启动马上点拍摄，使用这个简单的类，不仅启动很快（低于500ms），而且预览也非常流畅。当然，这个没有任何逻辑处理，算是很极致的情况，但是也说明，如果做极致的优化，卡顿的情况是可以得到很大缓解的。而且启动速度也有比较大的提升空间。就这个事情，跟基础侧也聊了下，他们认为这个最简单的情况并不能表明我们的优化空间很大，现在的拍摄逻辑太复杂，优化是很困难的。<br>我打算，在我们也理解和熟悉的基础上，推动基础侧一起进行优化。</p>
+<h4 id="2-渲染"><a href="#2-渲染" class="headerlink" title="2. 渲染"></a>2. 渲染</h4><p>渲染这块，首先还是找最底层的开发接口。确认最底层的就是OpenGL ES了。OpenGL是一个宽广的体系。OpenGL ES是OpenGL的嵌入式版本（Embedded Systems），最新版本是3.2。OpenGL的硬件加速原理跟MMX这类指令类似，就是可以通过专门的硬件一次处理更多的数据和做更复杂的操作。<br>       图形图像处理有一些固定的处理，比如计算Alpha混合，放大缩小，变换色彩空间等，抽象出来就是对象与对象之上的操作，这个操作，在OpenGL里面称为渲染管线，或者理解为通过硬件实现的一个处理流程。这个流程在OpenGL ES 1.X里面是固定的，要加速只能选择固定的处理模式。而在OpenGL ES 2.X里面，渲染管线是可编程的，有专门的脚本，GLSL。<br>       关于这块我理解也不深，我现在需要解决的是，如何把SampleBuffer渲染出来。查了一些资料，使用了最简单的方法。<br>       系统提供了GLKView，用于封装OpenGL ES的一些操作，我尝试通过最原始的方式，继承了一个UIView。首先需要修改Layer的Class，这样才能用于OpenGL ES的渲染。</p>
+<figure class="highlight objectivec"><table><tr><td class="code"><pre><div class="line">+ (Class)layerClass</div><div class="line">&#123;</div><div class="line">    <span class="keyword">return</span> [<span class="built_in">CAEAGLLayer</span> <span class="keyword">class</span>];</div><div class="line">&#125;</div><div class="line"> </div><div class="line">- (<span class="keyword">void</span>)setupLayer</div><div class="line">&#123;</div><div class="line">    _EAGLLayer = (<span class="built_in">CAEAGLLayer</span>*)<span class="keyword">self</span>.layer;</div><div class="line">    _EAGLLayer.opaque = <span class="literal">YES</span>;</div><div class="line">    _EAGLLayer.drawableProperties = @&#123;</div><div class="line">                                      kEAGLDrawablePropertyRetainedBacking: @NO,</div><div class="line">                                      kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8</div><div class="line">                                      &#125;;</div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先是layer需要换成CAEAGLLayer，然后设置为不透明（性能），还有每次擦除原图，还有一个颜色的格式。<br>主要的两个对象，EAGLContext，还有CIContext。EAGLContext是OpenGL ES的上下文，CIContext是Core Image里面图像的上下文。</p>
+<figure class="highlight sqf"><table><tr><td class="code"><pre><div class="line">- (void)initEAGLContext</div><div class="line">&#123;</div><div class="line">    EAGLRenderingAPI glAPI = kEAGLRenderingAPIOpenGLES2;</div><div class="line">    <span class="variable">_glContext</span> = [[EAGLContext alloc] initWithAPI:glAPI];</div><div class="line">    <span class="keyword">if</span> (<span class="variable">_glContext</span> == <span class="literal">nil</span>)</div><div class="line">    &#123;</div><div class="line">        NSLog(@<span class="string">"GLES2 init failed!"</span>);</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">   </div><div class="line">    [EAGLContext setCurrentContext:<span class="variable">_glContext</span>];</div><div class="line">   </div><div class="line">    <span class="variable">_pxContext</span> = [CIContext contextWithEAGLContext:<span class="variable">_glContext</span>];</div><div class="line">    [<span class="variable">_pxContext</span> retain];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>EAGLRenderingAPI用于指定API的版本，也就是前面说的1.X和2.X，一般使用2.X。然后再用glContext初始化CIContext。<br>中间涉及到RenderBuffer和FrameBuffer的代码，涉及到OpenGL的渲染体系，这里我也不是特别熟，就不展开讲了。<br>关键的方法</p>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)<span class="string">drawSampleBuffer:</span>(CMSampleBufferRef) sampleBuffer</div><div class="line">&#123;</div><div class="line">    CVPixelBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);</div><div class="line">    CIImage* image = [CIImage <span class="string">imageWithCVPixelBuffer:</span>imageBuffer];</div><div class="line">    [_pxContext <span class="string">drawImage:</span>image <span class="string">inRect:</span>self.frame <span class="string">fromRect:</span>image.extent];</div><div class="line">    [_glContext <span class="string">presentRenderbuffer:</span>GL_RENDERBUFFER];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里代码非常简单，从SampleBuffer里获得PixelBuffer，然后转换为CIImage，给CIContext进行绘制，然后通过GLContext渲染出来。</p>
+<p>这个最简单的拍摄预览原型就搭建好了。这里所提到的代码在Demo的LightCamera文件夹下。<br>通过这个Demo，一个是了解了拍摄相关的技术点和大致流程，另外也了解到在现有的CPU负载情况下，帧率能优化到什么程度。下一步，就是分析完整的每帧处理流程，看能否有压缩的空间。后面计划和基础侧一起，希望能把卡顿优化到满意的程度。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://StoryTeam.cn/2016/11/30/2016-11-30-最简单的拍摄原型研究/" data-title="最简单的拍摄原型研究 | StoryTeam" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/12/28/2016-12-28-设计模式（二）/" title="设计模式（二）">
+  <strong>上一篇</strong><br/>
+  <span>
+  设计模式（二）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/11/30/2016-11-30-内存管理讨论总结/"  title="内存管理讨论总结">
+ <strong>下一篇</strong><br/> 
+ <span>内存管理讨论总结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/11/30/2016-11-30-最简单的拍摄原型研究/" data-title="最简单的拍摄原型研究" data-url="http://StoryTeam.cn/2016/11/30/2016-11-30-最简单的拍摄原型研究/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-摄像头"><span class="toc-number">1.</span> <span class="toc-text">1. 摄像头</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-渲染"><span class="toc-number">2.</span> <span class="toc-text">2. 渲染</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/其它/" title="其它">其它<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://developer.apple.com" target="_blank" title="官方开发者">官方开发者</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer>
+
+
+<div id="footer" >
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/https://github.com/StoryTeam" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:SNG_StoryTeam@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="StoryTeam">StoryTeam</a>
+		
+		</p>
+</div>
+<img src="/img/logo_new.jpg" style="position: fixed; top: -9999px;height: 500px;width: 500px;">
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+<script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+<script src="/js/mm.js"></script>
+<script src="/js/subscribe.js"></script>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+  
+
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"StoryTeam"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+<!--
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+-->
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="baidu-site-verification" content="vqJV77bZM6" />
   
-    <title>关于 | StoryTeam</title>
+    <title>气泡抖动动画实现 | StoryTeam</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="StoryTeam">
@@ -13,19 +13,24 @@
 
     <meta name="keywords" content="生活,笔记,经验,分享">
     <meta name="applicable-device" content="pc,mobile">
-    <meta name="description" content="关于日迹团队
-成员">
+    <meta name="description" content="1.Bezier曲线绘制圆形有的时候我们需要对圆形的某个部分进行形变处理，但是修改transform属性常常修改的是整个圆形的样式，无法满足我们的需求。所以我们需要用多段贝赛尔曲线来实现圆形的绘制，这样我们可以通过修改其中某一段曲线样式，从而实现针对圆形某个局部的变形。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="关于">
-<meta property="og:url" content="http://StoryTeam.cn/2014/07/06/about/index.html">
+<meta property="og:title" content="气泡抖动动画实现">
+<meta property="og:url" content="http://StoryTeam.cn/2016/11/30/2016-11-30-气泡抖动动画实现/index.html">
 <meta property="og:site_name" content="StoryTeam">
-<meta property="og:description" content="关于日迹团队
-成员">
-<meta property="og:updated_time" content="2017-01-08T03:32:27.000Z">
+<meta property="og:description" content="1.Bezier曲线绘制圆形有的时候我们需要对圆形的某个部分进行形变处理，但是修改transform属性常常修改的是整个圆形的样式，无法满足我们的需求。所以我们需要用多段贝赛尔曲线来实现圆形的绘制，这样我们可以通过修改其中某一段曲线样式，从而实现针对圆形某个局部的变形。">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/17.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/18.gif">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/13.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/14.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/15.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/16.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/19.gif">
+<meta property="og:updated_time" content="2017-01-08T06:20:20.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="关于">
-<meta name="twitter:description" content="关于日迹团队
-成员">
+<meta name="twitter:title" content="气泡抖动动画实现">
+<meta name="twitter:description" content="1.Bezier曲线绘制圆形有的时候我们需要对圆形的某个部分进行形变处理，但是修改transform属性常常修改的是整个圆形的样式，无法满足我们的需求。所以我们需要用多段贝赛尔曲线来实现圆形的绘制，这样我们可以通过修改其中某一段曲线样式，从而实现针对圆形某个局部的变形。">
+<meta name="twitter:image" content="http://ojfz9611q.bkt.clouddn.com/17.jpg">
 
     
     <link rel="alternative" href="/atom.xml" title="StoryTeam" type="application/atom+xml">
@@ -72,13 +77,48 @@
       <div id="main" class="post" itemscope itemprop="blogPost">
   
 	<article itemprop="articleBody"> 
+		
+  <header class="article-info clearfix">
+    <h1 itemprop="name">
+      
+        <a href="/2016/11/30/2016-11-30-气泡抖动动画实现/" target="_blank" title="气泡抖动动画实现" itemprop="url">气泡抖动动画实现</a>
+    </h1>
+    <p class="article-time">
+      <time datetime="2016-11-30T10:24:00.000Z" itemprop="datePublished">2016-11-30</time>
+      <span class="toc-text">neil</span>
+      <span style="margin-left: 0.5em;"><i class="icon-eye-open"></i> <span class="viewcount"></span></span>
+    </p>
+  </header>
+
 	<div class="article-content">
 		
-		<h2 id="关于"><a href="#关于" class="headerlink" title="关于"></a>关于</h2><p>日迹团队</p>
-<h2 id="成员"><a href="#成员" class="headerlink" title="成员"></a>成员</h2>  
+		<h4 id="1-Bezier曲线绘制圆形"><a href="#1-Bezier曲线绘制圆形" class="headerlink" title="1.Bezier曲线绘制圆形"></a>1.Bezier曲线绘制圆形</h4><p>有的时候我们需要对圆形的某个部分进行形变处理，但是修改transform属性常常修改的是整个圆形的样式，无法满足我们的需求。所以我们需要用多段贝赛尔曲线来实现圆形的绘制，这样我们可以通过修改其中某一段曲线样式，从而实现针对圆形某个局部的变形。</p>
+<a id="more"></a>
+<p> <img src="http://ojfz9611q.bkt.clouddn.com/17.jpg" alt=""></p>
+<p>如上图，我们可以通过AB, BC, CD, DA四段贝塞尔曲线来合成一个圆形，这样我们就可以对圆的局部进行动画操作了。</p>
+<p>那么问题来了，如何通过Bezier曲线来拟合1/4的圆呢？<br>Bezier三阶曲线方程是：<code>P(t) = A*(1 - t)3 + C1*3(1 - t)2t + C2*3(1 - t)t2 + B*t3, t = 0 ... 1</code>。当A到 C1的距离和B到 C2的距离是3.6时，贝塞尔所拟合的曲线最接近1/4圆，具体的推导过程可以参考这篇博客<a href="http://blog.csdn.net/nibiewuxuanze/article/details/4810305" target="_blank" rel="external">http://blog.csdn.net/nibiewuxuanze/article/details/4810305</a> </p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/18.gif" alt="">        </p>
+<p>所以对于四个关键点和8个控制点的代码如下：</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/13.jpg" alt=""></p>
+<p>将四段贝塞尔曲线拼接起来，我们就可以得到圆形了。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/14.jpg" alt=""></p>
+<h4 id="2-使用阻尼振动来模拟气泡的抖动过程"><a href="#2-使用阻尼振动来模拟气泡的抖动过程" class="headerlink" title="2.使用阻尼振动来模拟气泡的抖动过程"></a>2.使用阻尼振动来模拟气泡的抖动过程</h4><p>阻尼振动是指任何<a href="https://zh.wikipedia.org/wiki/%E6%8C%AF%E5%8A%A8" target="_blank" rel="external">振动</a>系统在振动中，由于外界作用（如流体<a href="https://zh.wikipedia.org/wiki/%E9%98%BB%E5%8A%9B" target="_blank" rel="external">阻力</a>、<a href="https://zh.wikipedia.org/wiki/%E6%91%A9%E6%93%A6%E5%8A%9B" target="_blank" rel="external">摩擦力</a>等）和/或系统本身固有的原因引起的<a href="https://zh.wikipedia.org/wiki/%E6%8C%AF%E5%B9%85" target="_blank" rel="external">振动幅度</a>逐渐下降，在实际振动中，由于摩擦力总是存在的，所以振动系统最初所获得的能量，在振动过程中因阻力不断对系统做负功，使得系统的能量不断减少，振动的强度逐渐减弱，振幅也就越来越小，以至于最后的停止振动，像这样的因系统的力学能，由于摩擦及转化成内能逐渐减少，振幅随时间而减弱振动，称为阻尼振动</p>
+<p>所以使用阻尼振动来模拟一些动画效果可以使得动画看起来更加流畅，逼真。<br>阻尼振动的具体实现就不详细列举了，有兴趣的同学可以看一下：<a href="https://zh.wikipedia.org/wiki/%E9%98%BB%E5%B0%BC" target="_blank" rel="external">https://zh.wikipedia.org/wiki/%E9%98%BB%E5%B0%BC</a> </p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/15.jpg" alt=""></p>
+<p>我们把X轴的位置当作上图点A的横坐标，通过阻尼运动来模拟A点在中心点的来回摆动，就可以得到一个气泡的摆动动画。（为来让动画看起来更明显，刻意延长了动画时间，增加了摆动幅度，所以可能动画看起来有点变扭）。</p>
+<p> <img src="http://ojfz9611q.bkt.clouddn.com/16.jpg" alt=""></p>
+<p>最终得到的效果图如下：</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/19.gif" alt=""></p>
+<p>结：贝塞尔曲线和阻尼振动在动画的设计和实现上很好用，如果能灵活使用，我们可以实现出很多很好的动画效果</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
 
 
 </div>
@@ -87,7 +127,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://StoryTeam.cn/2014/07/06/about/" data-title="关于 | StoryTeam" data-tsina="null" class="share clearfix">
+	  <div data-url="http://StoryTeam.cn/2016/11/30/2016-11-30-气泡抖动动画实现/" data-title="气泡抖动动画实现 | StoryTeam" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -96,9 +136,32 @@
 </footer>
 
    	       
-	</article>	
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/11/30/2016-11-30-内存管理讨论总结/" title="内存管理讨论总结">
+  <strong>上一篇</strong><br/>
+  <span>
+  内存管理讨论总结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/11/23/2016-11-23-踩坑与收获 copy/"  title="踩坑与收获">
+ <strong>下一篇</strong><br/> 
+ <span>踩坑与收获
+</span>
+</a>
+</div>
+
+</nav>
+
+	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2014/07/06/about/" data-title="关于" data-url="http://StoryTeam.cn/2014/07/06/about/"></div>
+	<div class="ds-thread" data-thread-key="2016/11/30/2016-11-30-气泡抖动动画实现/" data-title="气泡抖动动画实现" data-url="http://StoryTeam.cn/2016/11/30/2016-11-30-气泡抖动动画实现/"></div>
 </section>
 
 
@@ -108,7 +171,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#关于"><span class="toc-number">1.</span> <span class="toc-text">关于</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#成员"><span class="toc-number">2.</span> <span class="toc-text">成员</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Bezier曲线绘制圆形"><span class="toc-number">1.</span> <span class="toc-text">1.Bezier曲线绘制圆形</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-使用阻尼振动来模拟气泡的抖动过程"><span class="toc-number">2.</span> <span class="toc-text">2.使用阻尼振动来模拟气泡的抖动过程</span></a></li></ol>
  
   </div>
 
@@ -122,7 +185,11 @@
 		<ul>
 		
 		  
-			<li><a href="/categories/iOS/" title="iOS">iOS<sup>1</sup></a></li>
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/其它/" title="其它">其它<sup>1</sup></a></li>
 		  
 		
 		</ul>
