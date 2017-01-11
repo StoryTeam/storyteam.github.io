@@ -309,6 +309,57 @@
   </entry>
   
   <entry>
+    <title>如何做自己的清道夫</title>
+    <link href="http://StoryTeam.cn/2016/10/31/2016-10-31-%E5%A6%82%E4%BD%95%E5%81%9A%E8%87%AA%E5%B7%B1%E7%9A%84%E6%B8%85%E9%81%93%E5%A4%AB/"/>
+    <id>http://StoryTeam.cn/2016/10/31/2016-10-31-如何做自己的清道夫/</id>
+    <published>2016-10-31T14:06:00.000Z</published>
+    <updated>2017-01-11T16:36:06.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>小组内之前一直是使用ARC来开发所以很少关注内存的使用状态，现需要更换成MRC之后很容易就会造成泄露，但又一直不知从何入手，所以我这里就简单的总结一下之前在查 Story 首页泄露的方法，以便自己能试着清理自己的垃圾。</p>
+<a id="more"></a>
+<h4 id="一、环境"><a href="#一、环境" class="headerlink" title="一、环境"></a>一、环境</h4><h5 id="注意事项："><a href="#注意事项：" class="headerlink" title="注意事项："></a>注意事项：</h5><p>1）使用真机，因为模拟器是有优化过的所以有些场景是抓取不到现场。<br>2）不要使用 <code>XCode Debug</code> 调试，这样会带慢真机的运行。<br>3）记得把 <code>dSYM</code> 打开，否则就看不到符号了。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011229249image001.jpg" alt=""></p>
+<h5 id="Instruments简单介绍："><a href="#Instruments简单介绍：" class="headerlink" title="Instruments简单介绍："></a>Instruments简单介绍：</h5><p>1） 启动工具</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011276100image003.jpg" alt=""></p>
+<p>2）抓取泄露</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011266003image005.jpg" alt=""></p>
+<p>3）选择抓取的APP</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011285811image007.jpg" alt=""></p>
+<p>Installed Apps：iPhone上安装好的App，选择此项内容是直接通过工具来启动App。<br>Running Applications：iPhone上正在运行的App，选择此是使用Attach的方式连接到App。</p>
+<p>4）启动，正常操作，自动抓取泄露点</p>
+<h4 id="二、分析"><a href="#二、分析" class="headerlink" title="二、分析"></a>二、分析</h4><h5 id="1、过滤符号表"><a href="#1、过滤符号表" class="headerlink" title="1、过滤符号表"></a>1、过滤符号表</h5><p>在庞大的项目里代码是很多，而我们只想找出自己所写的模块的问题，只能先把无用的模拟给过滤掉，如下输入 tb 过滤掉跟 tb 无关的符号表。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011243638image009.jpg" alt=""></p>
+<h5 id="2、关注泄露点"><a href="#2、关注泄露点" class="headerlink" title="2、关注泄露点"></a>2、关注泄露点</h5><p>左下角显示一大块就是当前内存的使用状态<br>2.1）Category：对象的名字<br>2.2）Persistent：对象引用计数<br>2.3）Persistent Bytes：对象所点的内容大小</p>
+<p>了解到分别代表什么之后我们就观察Category里的对象有没有你所关注的内容，并且关注在不停的同一操作时是否有不停的增加，如：观察 XXXXXXXXXInfoModel 对象</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011213352image011.jpg" alt=""></p>
+<p>经过点击同一个视频进行多次播放之后的情况如下：</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011277550image013.jpg" alt=""></p>
+<p>发现由原来的 7 变成了 11 ，基本上是播放一次就会增加 1 个引用计数。</p>
+<h5 id="3、分析泄露处"><a href="#3、分析泄露处" class="headerlink" title="3、分析泄露处"></a>3、分析泄露处</h5><p>3.1）详细查看是谁持有了这个引用</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011242975image015.jpg" alt=""></p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011258225image017.jpg" alt=""> </p>
+<p>3.2）阅读分析持有者是谁<br>3.2.1）By Group：引用是以成对合并显示的，选择这个之后发现只有中间那个是 +1 而没有 -1的。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011221422image019.jpg" alt=""></p>
+<p>3.2.2）By Time：引用是按时间排序显示，当点击某一个操作之后也会同时高亮对应的组合。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011236321image021.jpg" alt=""></p>
+<p>3.3）查找问题处<br>那么已经找到持有者是谁了，接下来只需要找到在那里进行持有的操作而又没有释放的行为。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011286359image023.jpg" alt=""></p>
+<p>双击最右边的调用栈打开相应的代码，我们先双击 XXXXXXInfoStorage(ModifyFeature) likeVideoFeature 这一行调用。<br>可以通过定位到的代码并且阅读代码逻辑可以得出这个 videoLikeInfo 只有 alloc 但没有 release 的操作，从而引发内存泄露。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011293377image025.jpg" alt=""></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;小组内之前一直是使用ARC来开发所以很少关注内存的使用状态，现需要更换成MRC之后很容易就会造成泄露，但又一直不知从何入手，所以我这里就简单的总结一下之前在查 Story 首页泄露的方法，以便自己能试着清理自己的垃圾。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://StoryTeam.cn/categories/iOS/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>CoreAnimation浅析</title>
     <link href="http://StoryTeam.cn/2016/10/31/2016-10-31-CoreAnimation%E6%B5%85%E6%9E%90/"/>
     <id>http://StoryTeam.cn/2016/10/31/2016-10-31-CoreAnimation浅析/</id>

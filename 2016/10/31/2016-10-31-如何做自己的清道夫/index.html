@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="baidu-site-verification" content="vqJV77bZM6" />
   
-    <title>手势和touch | StoryTeam</title>
+    <title>如何做自己的清道夫 | StoryTeam</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="StoryTeam">
@@ -13,20 +13,30 @@
 
     <meta name="keywords" content="生活,笔记,经验,分享">
     <meta name="applicable-device" content="pc,mobile">
-    <meta name="description" content="背景：视频录制过程中，支持手势放大和缩小">
+    <meta name="description" content="小组内之前一直是使用ARC来开发所以很少关注内存的使用状态，现需要更换成MRC之后很容易就会造成泄露，但又一直不知从何入手，所以我这里就简单的总结一下之前在查 Story 首页泄露的方法，以便自己能试着清理自己的垃圾。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="手势和touch">
-<meta property="og:url" content="http://StoryTeam.cn/2016/10/31/2016-10-31-手势和touch/index.html">
+<meta property="og:title" content="如何做自己的清道夫">
+<meta property="og:url" content="http://StoryTeam.cn/2016/10/31/2016-10-31-如何做自己的清道夫/index.html">
 <meta property="og:site_name" content="StoryTeam">
-<meta property="og:description" content="背景：视频录制过程中，支持手势放大和缩小">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/29.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/30.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/31.jpg">
-<meta property="og:updated_time" content="2017-01-08T14:00:23.000Z">
+<meta property="og:description" content="小组内之前一直是使用ARC来开发所以很少关注内存的使用状态，现需要更换成MRC之后很容易就会造成泄露，但又一直不知从何入手，所以我这里就简单的总结一下之前在查 Story 首页泄露的方法，以便自己能试着清理自己的垃圾。">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011229249image001.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011276100image003.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011266003image005.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011285811image007.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011243638image009.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011213352image011.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011277550image013.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011242975image015.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011258225image017.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011221422image019.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011236321image021.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011286359image023.jpg">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011293377image025.jpg">
+<meta property="og:updated_time" content="2017-01-11T16:36:06.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="手势和touch">
-<meta name="twitter:description" content="背景：视频录制过程中，支持手势放大和缩小">
-<meta name="twitter:image" content="http://ojfz9611q.bkt.clouddn.com/29.jpg">
+<meta name="twitter:title" content="如何做自己的清道夫">
+<meta name="twitter:description" content="小组内之前一直是使用ARC来开发所以很少关注内存的使用状态，现需要更换成MRC之后很容易就会造成泄露，但又一直不知从何入手，所以我这里就简单的总结一下之前在查 Story 首页泄露的方法，以便自己能试着清理自己的垃圾。">
+<meta name="twitter:image" content="http://ojfz9611q.bkt.clouddn.com/2017011229249image001.jpg">
 
     
     <link rel="alternative" href="/atom.xml" title="StoryTeam" type="application/atom+xml">
@@ -77,44 +87,48 @@
   <header class="article-info clearfix">
     <h1 itemprop="name">
       
-        <a href="/2016/10/31/2016-10-31-手势和touch/" target="_blank" title="手势和touch" itemprop="url">手势和touch</a>
+        <a href="/2016/10/31/2016-10-31-如何做自己的清道夫/" target="_blank" title="如何做自己的清道夫" itemprop="url">如何做自己的清道夫</a>
     </h1>
     <p class="article-time">
-      <time datetime="2016-10-31T12:42:00.000Z" itemprop="datePublished">2016-10-31</time>
-      <span class="toc-text">lilin</span>
+      <time datetime="2016-10-31T14:06:00.000Z" itemprop="datePublished">2016-10-31</time>
+      <span class="toc-text">kyle</span>
       <span style="margin-left: 0.5em;"><i class="icon-eye-open"></i> <span class="viewcount"></span></span>
     </p>
   </header>
 
 	<div class="article-content">
 		
-		<h6 id="背景："><a href="#背景：" class="headerlink" title="背景："></a>背景：</h6><p>视频录制过程中，支持手势放大和缩小</p>
+		<p>小组内之前一直是使用ARC来开发所以很少关注内存的使用状态，现需要更换成MRC之后很容易就会造成泄露，但又一直不知从何入手，所以我这里就简单的总结一下之前在查 Story 首页泄露的方法，以便自己能试着清理自己的垃圾。</p>
 <a id="more"></a>
-<h6 id="过程："><a href="#过程：" class="headerlink" title="过程："></a>过程：</h6><p>一开始觉得这个需求比较简单，不外乎加一个手势，调整一下手势的触发区域。但是在实际开发中，遇到了三个问题：<br>1 首先，缩放手势和录制按钮不在同一个view里，无法通过简单设置view.multipleTouchEnabled 来开启多点触控<br>2 缩放界面使用的是UIGestureRecognizer相关的接口，而录制按钮用的touches相关接口，这两套接口是否能完全协作 ？<br>3 缩放手势的View里还有其他两三个手势，这些手势本来就有了彼此的互斥逻辑，新的修改会不会对原本的逻辑有影响 ？</p>
-<p>对这块相关的技术不是很熟悉，不得不花了点时间，google和学习了一下相关的东西。</p>
-<p><strong>理解UITouch，UIEvent，UIGestureRecognizer以及UIResponder</strong><br>UITouch：一个触摸对象代表一根手指对屏幕的接触以及在屏幕上的移动。其生命周期从手指接触屏幕开始，到手指离开屏幕为止。</p>
-<p>手势：一个手势需要一根或多根手指完成，即一个手势包含一个或多个UITouch对象。</p>
-<p>触摸序列：用于描述手势发生时（多个）手指接触屏幕的过程。整个过程从构成手势的第一根手指接触屏幕开始，到手势进行完毕时的最后一个手指离开屏幕为止。</p>
-<p>UIEvent：代表iOS系统同外界互动时所发生的事件。有三种：触摸事件，动作事件，远程控制事件。对于触摸事件，UIEvent中保存着同当前触摸序列相关的UITouch对象。</p>
-<p>UIGestureRecognizer：用于识别特定手势。</p>
-<p>UIResponder：可以响应事件，动作消息等。多个响应对象组成响应链，从而形成完整的事件/消息响应体系。</p>
-<p>UITouch<br>UITouch是UIKit中处理用户触屏交互的底层对象。<br>每个UITouch都对应一个当前接触屏幕的手指。<br>如果手指移动，系统会不断更新UITouch的属性，例如previousLocationInView:和locationInView:。<br>在手势发生的过程中（触摸序列中），UITouch对象会被创建，被销毁，还会改变状态。例如，两个手指先后接触屏幕，而后又先后离开屏幕，在这个过程中，UITouch对象的数量会呈现1 –&gt; 2 –&gt; 1。<br>UIEvent<br>UIEvent用来代表触摸事件，可以将多个同时或近似时间发生的手指对屏幕的接触(UITouch)描述为一个整体，解读为一个特定的手势或动作。<br>UIEvent对象的生命周期也只维持在手势发生（触摸序列）期间，不要试图retain UIEvent或UITouch对象，如果需要记录它们的信息，应该复制这些信息。<br>UIGestureRecognizer<br>将其添加至视图，可以将触摸事件识别为特定的手势，如果识别成功，则调用关联的动作方法。在iOS中，一共有六种标准手势：</p>
-<p>点击<br>捏合<br>拖拽<br>滑动<br>旋转<br>长按<br>当然也可以自定义手势。</p>
-<p>UIResponder<br>让视图/控制器直接处理触摸事件，通过判定比较UITouch对象的前后状态，直接实现逻辑功能，例如绘画，拖动屏幕控件等。</p>
-<p>处理触摸事件的四个方法<br>不论是UIGestureRecognizer还是UIResponder，都利用这四个方法处理触摸事件。</p>
-<figure class="highlight groovy"><table><tr><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)<span class="string">touchesBegan:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event; <span class="comment">// 处理开始阶段的UITouch对象</span></div><div class="line"> </div><div class="line">- (<span class="keyword">void</span>)<span class="string">touchesMoved:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event; <span class="comment">// 处理移动阶段的UITouch对象</span></div><div class="line"> </div><div class="line">- (<span class="keyword">void</span>)<span class="string">touchesEnded:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event; <span class="comment">// 处理结束阶段的UITouch对象</span></div><div class="line"> </div><div class="line">- (<span class="keyword">void</span>)<span class="string">touchesCancelled:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event; <span class="comment">// 处理取消阶段的UITouch对象</span></div></pre></td></tr></table></figure>
-<p>多点触摸<br>涉及多个UITouch对象，需要比较它们前后的状态，可以使用CFDictionaryRef，将对象的地址作为键，状态（值）地址作为值，存入字典</p>
-<p>可以简单理解：<br>1 touch是比手势更底层的东西，touch经过系统的封装后，转为gesture，抛给上层<br>2 touch是view的固有方法，而gesture是touch和selector的链接点。</p>
-<p>为了简化了方便验证各种方案，单独写了个简单的demo：</p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/29.jpg" alt=""></p>
-<p>通过抽象独立demo，避免每次都有启动QQ，大大节省了开发时间。</p>
-<p><strong>（原来的顺序，可以看到两个手势互相干扰）</strong></p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/30.jpg" alt=""></p>
-<p>最后通过重写了</p>
-<figure class="highlight erlang"><table><tr><td class="code"><pre><div class="line">- <span class="params">(BOOL)</span>gestureRecognizer:<span class="params">(UIGestureRecognizer *)</span>gestureRecognizer shouldReceiveTouch:<span class="params">(UITouch *)</span>touch</div><div class="line"> </div><div class="line">- <span class="params">(BOOL)</span>gestureRecognizer:<span class="params">(UIGestureRecognizer *)</span>gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:<span class="params">(UIGestureRecognizer *)</span>otherGestureRecognizer</div></pre></td></tr></table></figure>
-<p>解决了问题。<br><strong>（期望的顺序）</strong></p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/31.jpg" alt=""></p>
-<h6 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h6><p>一个View层级里手势会互相打断，比如view和subView，subsubView等，需要修改相应的手势delegate才能实现多点触控的效果<br>写独立demo来研究灭幼把握的技术点，可以大大加快开发流程，并且可以帮助过滤掉干扰。</p>
+<h4 id="一、环境"><a href="#一、环境" class="headerlink" title="一、环境"></a>一、环境</h4><h5 id="注意事项："><a href="#注意事项：" class="headerlink" title="注意事项："></a>注意事项：</h5><p>1）使用真机，因为模拟器是有优化过的所以有些场景是抓取不到现场。<br>2）不要使用 <code>XCode Debug</code> 调试，这样会带慢真机的运行。<br>3）记得把 <code>dSYM</code> 打开，否则就看不到符号了。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011229249image001.jpg" alt=""></p>
+<h5 id="Instruments简单介绍："><a href="#Instruments简单介绍：" class="headerlink" title="Instruments简单介绍："></a>Instruments简单介绍：</h5><p>1） 启动工具</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011276100image003.jpg" alt=""></p>
+<p>2）抓取泄露</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011266003image005.jpg" alt=""></p>
+<p>3）选择抓取的APP</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011285811image007.jpg" alt=""></p>
+<p>Installed Apps：iPhone上安装好的App，选择此项内容是直接通过工具来启动App。<br>Running Applications：iPhone上正在运行的App，选择此是使用Attach的方式连接到App。</p>
+<p>4）启动，正常操作，自动抓取泄露点</p>
+<h4 id="二、分析"><a href="#二、分析" class="headerlink" title="二、分析"></a>二、分析</h4><h5 id="1、过滤符号表"><a href="#1、过滤符号表" class="headerlink" title="1、过滤符号表"></a>1、过滤符号表</h5><p>在庞大的项目里代码是很多，而我们只想找出自己所写的模块的问题，只能先把无用的模拟给过滤掉，如下输入 tb 过滤掉跟 tb 无关的符号表。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011243638image009.jpg" alt=""></p>
+<h5 id="2、关注泄露点"><a href="#2、关注泄露点" class="headerlink" title="2、关注泄露点"></a>2、关注泄露点</h5><p>左下角显示一大块就是当前内存的使用状态<br>2.1）Category：对象的名字<br>2.2）Persistent：对象引用计数<br>2.3）Persistent Bytes：对象所点的内容大小</p>
+<p>了解到分别代表什么之后我们就观察Category里的对象有没有你所关注的内容，并且关注在不停的同一操作时是否有不停的增加，如：观察 XXXXXXXXXInfoModel 对象</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011213352image011.jpg" alt=""></p>
+<p>经过点击同一个视频进行多次播放之后的情况如下：</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011277550image013.jpg" alt=""></p>
+<p>发现由原来的 7 变成了 11 ，基本上是播放一次就会增加 1 个引用计数。</p>
+<h5 id="3、分析泄露处"><a href="#3、分析泄露处" class="headerlink" title="3、分析泄露处"></a>3、分析泄露处</h5><p>3.1）详细查看是谁持有了这个引用</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011242975image015.jpg" alt=""></p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011258225image017.jpg" alt=""> </p>
+<p>3.2）阅读分析持有者是谁<br>3.2.1）By Group：引用是以成对合并显示的，选择这个之后发现只有中间那个是 +1 而没有 -1的。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011221422image019.jpg" alt=""></p>
+<p>3.2.2）By Time：引用是按时间排序显示，当点击某一个操作之后也会同时高亮对应的组合。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011236321image021.jpg" alt=""></p>
+<p>3.3）查找问题处<br>那么已经找到持有者是谁了，接下来只需要找到在那里进行持有的操作而又没有释放的行为。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011286359image023.jpg" alt=""></p>
+<p>双击最右边的调用栈打开相应的代码，我们先双击 XXXXXXInfoStorage(ModifyFeature) likeVideoFeature 这一行调用。<br>可以通过定位到的代码并且阅读代码逻辑可以得出这个 videoLikeInfo 只有 alloc 但没有 release 的操作，从而引发内存泄露。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011293377image025.jpg" alt=""></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -132,7 +146,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://StoryTeam.cn/2016/10/31/2016-10-31-手势和touch/" data-title="手势和touch | StoryTeam" data-tsina="null" class="share clearfix">
+	  <div data-url="http://StoryTeam.cn/2016/10/31/2016-10-31-如何做自己的清道夫/" data-title="如何做自己的清道夫 | StoryTeam" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -146,19 +160,27 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2016/10/31/2016-10-31-CoreAnimation浅析/" title="CoreAnimation浅析">
+ <a href="/2016/11/23/2016-11-23-踩坑与收获 copy/" title="踩坑与收获">
   <strong>上一篇</strong><br/>
   <span>
-  CoreAnimation浅析</span>
+  踩坑与收获</span>
 </a>
 </div>
 
+
+<div class="next">
+<a href="/2016/10/31/2016-10-31-CoreAnimation浅析/"  title="CoreAnimation浅析">
+ <strong>下一篇</strong><br/> 
+ <span>CoreAnimation浅析
+</span>
+</a>
+</div>
 
 </nav>
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2016/10/31/2016-10-31-手势和touch/" data-title="手势和touch" data-url="http://StoryTeam.cn/2016/10/31/2016-10-31-手势和touch/"></div>
+	<div class="ds-thread" data-thread-key="2016/10/31/2016-10-31-如何做自己的清道夫/" data-title="如何做自己的清道夫" data-url="http://StoryTeam.cn/2016/10/31/2016-10-31-如何做自己的清道夫/"></div>
 </section>
 
 
@@ -168,7 +190,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#背景："><span class="toc-number">1.</span> <span class="toc-text">背景：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#过程："><span class="toc-number">2.</span> <span class="toc-text">过程：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#总结："><span class="toc-number">3.</span> <span class="toc-text">总结：</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#一、环境"><span class="toc-number">1.</span> <span class="toc-text">一、环境</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#注意事项："><span class="toc-number">1.1.</span> <span class="toc-text">注意事项：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Instruments简单介绍："><span class="toc-number">1.2.</span> <span class="toc-text">Instruments简单介绍：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#二、分析"><span class="toc-number">2.</span> <span class="toc-text">二、分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1、过滤符号表"><span class="toc-number">2.1.</span> <span class="toc-text">1、过滤符号表</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2、关注泄露点"><span class="toc-number">2.2.</span> <span class="toc-text">2、关注泄露点</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3、分析泄露处"><span class="toc-number">2.3.</span> <span class="toc-text">3、分析泄露处</span></a></li></ol></li></ol>
  
   </div>
 
