@@ -452,4 +452,47 @@
     
   </entry>
   
+  <entry>
+    <title>iOS序列帧动画浅析</title>
+    <link href="http://StoryTeam.cn/2016/10/31/2016-10-31-iOS%E5%BA%8F%E5%88%97%E5%B8%A7%E5%8A%A8%E7%94%BB%E6%B5%85%E6%9E%90/"/>
+    <id>http://StoryTeam.cn/2016/10/31/2016-10-31-iOS序列帧动画浅析/</id>
+    <published>2016-10-31T12:19:00.000Z</published>
+    <updated>2017-01-15T12:56:20.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在iOS开发过程中，我们经常会用到序列帧动画，而比较简单的做法是直接使用提供的关键帧动画图片，通过不断改变UIImageView上层的image来实现动画效果，特别是当遇到一些较为复杂的动画，很难通过绘制实现的时候。</p>
+<a id="more"></a>
+<h4 id="系统方法"><a href="#系统方法" class="headerlink" title="系统方法"></a>系统方法</h4><p>对于序列帧动画，iOS自然提供了简单的一些方法来实现，那就是直接是用UIImageView。 </p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011520873image001.png" alt="图1"></p>
+<p><strong>animationImages</strong>:动画的序列帧图片数组<br><strong>animationDuration</strong>:动画一次持续的时间<br><strong>animationRepeatCount</strong>:动画的重复次数<br><strong>startAnimation</strong>:开始动画</p>
+<p>在loading动画或者不断重复的动画中，该方法很方便实现。只需要设置好动画图片序列，然后调用startAnimation即可。<br>但是对于需要频繁地动态开启或关闭动画，并且需要在动画停止之后设置该UIImageView的状态时，这种方法就显得不是那么好用了。因为不像UIView的动画一样，可以在动画结束之后调用complete block,我们很难获取到动画停止的准确时间点。</p>
+<h4 id="自定义方法"><a href="#自定义方法" class="headerlink" title="自定义方法"></a>自定义方法</h4><p>自定义的目的主要是提供complete block，能让我们准确的在动画结束的时间点去处理一些其他的操作，方便之后复杂功能需求的扩展。<br>自定义的主要思路就是在关键帧时间点替换成对应的图片。 实现没有什么难度，主要讲一下在自定义实现中的两个点。</p>
+<h5 id="1-CADisplayLink"><a href="#1-CADisplayLink" class="headerlink" title="1. CADisplayLink"></a>1. CADisplayLink</h5><p><img src="http://ojfz9611q.bkt.clouddn.com/2017011571404image003.png" alt="图2"></p>
+<p>CADisplayLink是一个可以获取屏幕刷新频率的定时器，当它被注册到runloop中后，每次屏幕需要刷新的时候，runloop就会调用CADisplayLink绑定的selector。</p>
+<h6 id="CADisplayLink-与-NSTimer-有什么不同"><a href="#CADisplayLink-与-NSTimer-有什么不同" class="headerlink" title="CADisplayLink 与 NSTimer 有什么不同"></a>CADisplayLink 与 NSTimer 有什么不同</h6><ul>
+<li>iOS设备的屏幕刷新频率是固定的，CADisplayLink在正常情况下会在每次刷新结束都被调用，精确度相当高。</li>
+<li>NSTimer的精确度就显得低了点，比如NSTimer的触发时间到的时候，runloop如果在阻塞状态，触发时间就会推迟到下一个runloop周期。并且 NSTimer新增了tolerance属性，让用户可以设置可以容忍的触发的时间的延迟范围。</li>
+<li>CADisplayLink使用场合相对专一，适合于UI的不停重绘，比如自定义动画引擎或者视频播放的渲染。NSTimer的使用范围要广泛的多，各种需要单次或者循环定时处理的任务都可以使用。在UI相关的动画或者显示内容使用 CADisplayLink比起用NSTimer的好处就是我们不需要在格外关心屏幕的刷新频率了，因为它本身就是跟屏幕刷新同步的。</li>
+</ul>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011527459image005.png" alt="图3"></p>
+<h5 id="2-imageNamed-和-imageWithContentsOfFile"><a href="#2-imageNamed-和-imageWithContentsOfFile" class="headerlink" title="2.imageNamed 和 imageWithContentsOfFile"></a>2.imageNamed 和 imageWithContentsOfFile</h5><p>因为序列帧动画需要load很多图片，所以在实现中会导致内存增长很大。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011591730image007.png" alt="图4"></p>
+<p>究其原因，就是因为读取图片的接口问题。</p>
+<ul>
+<li>imageNamed首先在系统缓存中根据指定的名字寻找图片，如果找到了就返回。如果没有在缓存中找到图片，该方法会从指定的文件中加载图片数据，并将其缓存起来，然后再把结果返回，下次再使用该名称图片的时候就省去了从硬盘中加载图片的过程。对于相同名称的图片，系统只会把它Cache到内存一次。</li>
+<li>imageWithContentsOfFile方法只是简单的加载图片，并不会将图片缓存起来</li>
+</ul>
+<h6 id="那么该如何选择ImageNamed和imageWithContentsOfFile呢？"><a href="#那么该如何选择ImageNamed和imageWithContentsOfFile呢？" class="headerlink" title="那么该如何选择ImageNamed和imageWithContentsOfFile呢？"></a>那么该如何选择ImageNamed和imageWithContentsOfFile呢？</h6><p>如果加载一张很大的图片，并且只使用一次，那么就不需要缓存这个图片。使用imageWithContentsOfFile会比较合适，因为系统不会浪费内存来缓存图片。<br>如果在程序中需要经常重用的图片，比如UITableView的图片，那么最好的选择是imageNamed方法，它可以节省出每次都从磁盘加载图片的时间。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在iOS开发过程中，我们经常会用到序列帧动画，而比较简单的做法是直接使用提供的关键帧动画图片，通过不断改变UIImageView上层的image来实现动画效果，特别是当遇到一些较为复杂的动画，很难通过绘制实现的时候。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://StoryTeam.cn/categories/iOS/"/>
+    
+    
+  </entry>
+  
 </feed>

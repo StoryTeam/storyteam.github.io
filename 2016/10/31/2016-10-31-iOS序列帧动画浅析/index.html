@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="baidu-site-verification" content="vqJV77bZM6" />
   
-    <title>CoreAnimation浅析 | StoryTeam</title>
+    <title>iOS序列帧动画浅析 | StoryTeam</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="StoryTeam">
@@ -13,23 +13,21 @@
 
     <meta name="keywords" content="生活,笔记,经验,分享">
     <meta name="applicable-device" content="pc,mobile">
-    <meta name="description" content="iOS实现动画的方式看似多种多样，其核心均依赖Core Animation。比如UIView动画([UIView AnimateWithDuration:animations:]等），实质上是对Core Animation的封装，提供简洁的动画接口。下面将对Core Animation进行简单介绍。">
+    <meta name="description" content="在iOS开发过程中，我们经常会用到序列帧动画，而比较简单的做法是直接使用提供的关键帧动画图片，通过不断改变UIImageView上层的image来实现动画效果，特别是当遇到一些较为复杂的动画，很难通过绘制实现的时候。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CoreAnimation浅析">
-<meta property="og:url" content="http://StoryTeam.cn/2016/10/31/2016-10-31-CoreAnimation浅析/index.html">
+<meta property="og:title" content="iOS序列帧动画浅析">
+<meta property="og:url" content="http://StoryTeam.cn/2016/10/31/2016-10-31-iOS序列帧动画浅析/index.html">
 <meta property="og:site_name" content="StoryTeam">
-<meta property="og:description" content="iOS实现动画的方式看似多种多样，其核心均依赖Core Animation。比如UIView动画([UIView AnimateWithDuration:animations:]等），实质上是对Core Animation的封装，提供简洁的动画接口。下面将对Core Animation进行简单介绍。">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/23.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/24.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/25.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/26.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/27.jpg">
-<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/28.jpg">
-<meta property="og:updated_time" content="2017-01-08T13:52:52.000Z">
+<meta property="og:description" content="在iOS开发过程中，我们经常会用到序列帧动画，而比较简单的做法是直接使用提供的关键帧动画图片，通过不断改变UIImageView上层的image来实现动画效果，特别是当遇到一些较为复杂的动画，很难通过绘制实现的时候。">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011520873image001.png">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011571404image003.png">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011527459image005.png">
+<meta property="og:image" content="http://ojfz9611q.bkt.clouddn.com/2017011591730image007.png">
+<meta property="og:updated_time" content="2017-01-15T12:56:20.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CoreAnimation浅析">
-<meta name="twitter:description" content="iOS实现动画的方式看似多种多样，其核心均依赖Core Animation。比如UIView动画([UIView AnimateWithDuration:animations:]等），实质上是对Core Animation的封装，提供简洁的动画接口。下面将对Core Animation进行简单介绍。">
-<meta name="twitter:image" content="http://ojfz9611q.bkt.clouddn.com/23.jpg">
+<meta name="twitter:title" content="iOS序列帧动画浅析">
+<meta name="twitter:description" content="在iOS开发过程中，我们经常会用到序列帧动画，而比较简单的做法是直接使用提供的关键帧动画图片，通过不断改变UIImageView上层的image来实现动画效果，特别是当遇到一些较为复杂的动画，很难通过绘制实现的时候。">
+<meta name="twitter:image" content="http://ojfz9611q.bkt.clouddn.com/2017011520873image001.png">
 
     
     <link rel="alternative" href="/atom.xml" title="StoryTeam" type="application/atom+xml">
@@ -80,43 +78,40 @@
   <header class="article-info clearfix">
     <h1 itemprop="name">
       
-        <a href="/2016/10/31/2016-10-31-CoreAnimation浅析/" target="_blank" title="CoreAnimation浅析" itemprop="url">CoreAnimation浅析</a>
+        <a href="/2016/10/31/2016-10-31-iOS序列帧动画浅析/" target="_blank" title="iOS序列帧动画浅析" itemprop="url">iOS序列帧动画浅析</a>
     </h1>
     <p class="article-time">
-      <time datetime="2016-10-31T12:57:00.000Z" itemprop="datePublished">2016-10-31</time>
-      <span class="toc-text">da</span>
+      <time datetime="2016-10-31T12:19:00.000Z" itemprop="datePublished">2016-10-31</time>
+      <span class="toc-text">neil</span>
       <span style="margin-left: 0.5em;"><i class="icon-eye-open"></i> <span class="viewcount"></span></span>
     </p>
   </header>
 
 	<div class="article-content">
 		
-		<p>iOS实现动画的方式看似多种多样，其核心均依赖Core Animation。比如UIView动画([UIView AnimateWithDuration:animations:]等），实质上是对Core Animation的封装，提供简洁的动画接口。<br>下面将对Core Animation进行简单介绍。</p>
+		<p>在iOS开发过程中，我们经常会用到序列帧动画，而比较简单的做法是直接使用提供的关键帧动画图片，通过不断改变UIImageView上层的image来实现动画效果，特别是当遇到一些较为复杂的动画，很难通过绘制实现的时候。</p>
 <a id="more"></a>
-<h4 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1 基本概念"></a>1 基本概念</h4><p><strong>1.1 Core Animation性质</strong><br>Core Animation是一组非常强大的动画处理API，其有以下几点特性：<br>1、跨平台：<br>在Mac OS X平台、iOS平台上均可使用。<br>2、不阻塞主线程：<br>Core Animation的动画执行过程都是在后台操作的，因此不会阻塞主线程。<br>3、作用对象为CALayer：<br>在创建UIView对象时，UIView内部会自动创建一个图层，即CALayer对象。<br>当UIView需要显示到屏幕上时，会调用drawRect:方法进行绘图，并且会将所有内容绘制在自己的图层上，绘图完毕后，系统会将图层拷贝到屏幕上，由此完成UIView的显示。也就是说，UIView本身不具备显示的功能，是它内部的层才有显示功能。<br>而Core Animation是直接作用在CALayer上的，并非UIView。<br>4、隐式动画属性：<br>CALayer很多属性在修改时都能形成动画效果，这些效果被称为“隐式动画属性”，比如：<br>bounds：用于设置CALayer的宽度和高度。修改这个属性会产生缩放动画。<br>backgroundColor：用于设置CALayer的背景色。修改这个属性会产生背景色的渐变动画。<br>position：用于设置CALayer的位置。修改这个属性会产生平移动画。</p>
-<p>P.S.可以通过事务关闭隐式动画：<br>[CATransaction begin];<br>// 关闭隐式动画<br>[CATransaction setDisableActions:YES];<br>self.myview.layer.position = CGPointMake(x, y);<br>[CATransaction commit];</p>
-<p><strong>1.2 层次结构</strong></p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/23.jpg" alt=""></p>
-<p>为了将像素显示到屏幕上，图形处理将在CPU上进行。然后数据会被会传送到 GPU，再被进行一些处理。最终像素显示到屏幕上。<br>Core Animation基于Core Graphics与OpenGL。在 iOS 上，几乎所有的东西都是通过Core Animation 绘制出来。然而在OS X上，绕过Core Animation直接使用Core Graphics绘制的情况并不少见，比如一些专门的应用（尤其是游戏），直接和OpenGL/OpenGL ES交流。</p>
-<p><strong>1.3 Core Animation协议与类型</strong></p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/24.jpg" alt=""></p>
-<p>Core Animation中所有类都遵守CAMediaTiming协议。</p>
-<p>CAAnimation：所有动画对象的父类，实现CAMediaTiming协议，负责控制动画的时间、速度和时间曲线等等。它是一个抽象类，不具备动画效果，不能直接使用。</p>
-<p>CAPropertyAnimation ：CAAnimation的子类，支持动画地显示图层的keyPath。它也是个抽象类，本身不具备动画效果，一般不直接使用。<br>CABasicAnimation：基本动画，做一些简单效果。<br>CAKeyframeAnimation：帧动画，做一些连续的流畅的动画。<br>CASpringAnimation：弹簧效果动画，是CABasicAnimation的子类，为iOS9.0之后新增。</p>
-<p>CAAnimationGroup：动画组，可以同时进行缩放、旋转等多个动画。<br>CATransition：转场动画，界面之间跳转、切换都可以用转场动画。</p>
-<p><strong>1.4 其他</strong><br>1、CALayer、UIview的区别<br>虽然CALayer能做出跟UIView一样的界面效果，但两者之间的差别在于对于事件处理的功能的支持。<br>CALayer：不能处理用户的触摸事件。性能较高，更加轻量级。<br>UIView：可以处理用户的触摸事件。<br>因此，如果显示出来的东西需要跟用户进行交互的话，需要使用UIView。否则，用UIView/CALayer均可。</p>
-<p>2、CALayer不能直接使用UIColor/UIImage，只能使用CGColor/CIImage等<br>CALayer是定义在QuartzCore框架中的，CGColor/CIImage等数据类型是定义在CoreGraphics框架中的，而UIColor和UIImage是定义在UIKit框架中的。<br>而QuartzCore框架和CoreGraphics框架是可以跨平台使用的，UIKit却只能在iOS中使用。<br>所以，为了保证可移植性，QuartzCore不能使用UIColor/UIImage，只能使用CGColor/CIImage。</p>
-<h4 id="2-使用方法"><a href="#2-使用方法" class="headerlink" title="2 使用方法"></a>2 使用方法</h4><p><strong>1、CABasicAnimation</strong><br>提供最基础的动画属性设置，完成简单动画效果，比如位置从A点到B点的改变。</p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/25.jpg" alt=""></p>
-<p><strong>2、CAKeyframeAnimation</strong><br>允许设置一个特定的数组，这个数组是动画在运动时的值。类似Flash动画里的关键帧。</p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/26.jpg" alt=""></p>
-<p><strong>3、CATransition</strong><br>通过设置type和subtype实现简单的过渡动画。</p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/27.jpg" alt=""></p>
-<p><strong>4、CAAnimationGroup</strong><br>将多个动画合并一起加入到层中，所有动画并发执行，可以方便地实现需要多种类型动画的场景。</p>
-<p><img src="http://ojfz9611q.bkt.clouddn.com/28.jpg" alt=""></p>
-<h5 id="3-总结"><a href="#3-总结" class="headerlink" title="3 总结"></a>3 总结</h5><p>由上可见，Core Animation中可以直接使用的类有：<br>CABasicAnimation<br>CAKeyframeAnimation<br>CATransition<br>CASpringAnimation<br>CAAnimationGroup</p>
-<p>综上所述，各种类适用的场景有所不同，选择建议为：<br>CABasicAnimation：可以看做是一种CAKeyframeAnimation的简单动画，只有头尾的关键帧。用于实现简单动画。<br>CAKeyframeAnimation：关键帧动画，一般用于处理复杂路径移动等动画。<br>CATransition：多用于转场。<br>CASpringAnimation：ios9之后的弹性动画，用来实现更加生动活泼的效果。<br>CAAnimationGroup：组合动画，将各种动画组合在一起，同步展示效果。</p>
-<p>P.S.此次月报旨在对Core Animation进行简单介绍，对Core Animation的进一步解析以及UIView Animation/Core Animation对比等还待后续完成。</p>
+<h4 id="系统方法"><a href="#系统方法" class="headerlink" title="系统方法"></a>系统方法</h4><p>对于序列帧动画，iOS自然提供了简单的一些方法来实现，那就是直接是用UIImageView。 </p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011520873image001.png" alt="图1"></p>
+<p><strong>animationImages</strong>:动画的序列帧图片数组<br><strong>animationDuration</strong>:动画一次持续的时间<br><strong>animationRepeatCount</strong>:动画的重复次数<br><strong>startAnimation</strong>:开始动画</p>
+<p>在loading动画或者不断重复的动画中，该方法很方便实现。只需要设置好动画图片序列，然后调用startAnimation即可。<br>但是对于需要频繁地动态开启或关闭动画，并且需要在动画停止之后设置该UIImageView的状态时，这种方法就显得不是那么好用了。因为不像UIView的动画一样，可以在动画结束之后调用complete block,我们很难获取到动画停止的准确时间点。</p>
+<h4 id="自定义方法"><a href="#自定义方法" class="headerlink" title="自定义方法"></a>自定义方法</h4><p>自定义的目的主要是提供complete block，能让我们准确的在动画结束的时间点去处理一些其他的操作，方便之后复杂功能需求的扩展。<br>自定义的主要思路就是在关键帧时间点替换成对应的图片。 实现没有什么难度，主要讲一下在自定义实现中的两个点。</p>
+<h5 id="1-CADisplayLink"><a href="#1-CADisplayLink" class="headerlink" title="1. CADisplayLink"></a>1. CADisplayLink</h5><p><img src="http://ojfz9611q.bkt.clouddn.com/2017011571404image003.png" alt="图2"></p>
+<p>CADisplayLink是一个可以获取屏幕刷新频率的定时器，当它被注册到runloop中后，每次屏幕需要刷新的时候，runloop就会调用CADisplayLink绑定的selector。</p>
+<h6 id="CADisplayLink-与-NSTimer-有什么不同"><a href="#CADisplayLink-与-NSTimer-有什么不同" class="headerlink" title="CADisplayLink 与 NSTimer 有什么不同"></a>CADisplayLink 与 NSTimer 有什么不同</h6><ul>
+<li>iOS设备的屏幕刷新频率是固定的，CADisplayLink在正常情况下会在每次刷新结束都被调用，精确度相当高。</li>
+<li>NSTimer的精确度就显得低了点，比如NSTimer的触发时间到的时候，runloop如果在阻塞状态，触发时间就会推迟到下一个runloop周期。并且 NSTimer新增了tolerance属性，让用户可以设置可以容忍的触发的时间的延迟范围。</li>
+<li>CADisplayLink使用场合相对专一，适合于UI的不停重绘，比如自定义动画引擎或者视频播放的渲染。NSTimer的使用范围要广泛的多，各种需要单次或者循环定时处理的任务都可以使用。在UI相关的动画或者显示内容使用 CADisplayLink比起用NSTimer的好处就是我们不需要在格外关心屏幕的刷新频率了，因为它本身就是跟屏幕刷新同步的。</li>
+</ul>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011527459image005.png" alt="图3"></p>
+<h5 id="2-imageNamed-和-imageWithContentsOfFile"><a href="#2-imageNamed-和-imageWithContentsOfFile" class="headerlink" title="2.imageNamed 和 imageWithContentsOfFile"></a>2.imageNamed 和 imageWithContentsOfFile</h5><p>因为序列帧动画需要load很多图片，所以在实现中会导致内存增长很大。</p>
+<p><img src="http://ojfz9611q.bkt.clouddn.com/2017011591730image007.png" alt="图4"></p>
+<p>究其原因，就是因为读取图片的接口问题。</p>
+<ul>
+<li>imageNamed首先在系统缓存中根据指定的名字寻找图片，如果找到了就返回。如果没有在缓存中找到图片，该方法会从指定的文件中加载图片数据，并将其缓存起来，然后再把结果返回，下次再使用该名称图片的时候就省去了从硬盘中加载图片的过程。对于相同名称的图片，系统只会把它Cache到内存一次。</li>
+<li>imageWithContentsOfFile方法只是简单的加载图片，并不会将图片缓存起来</li>
+</ul>
+<h6 id="那么该如何选择ImageNamed和imageWithContentsOfFile呢？"><a href="#那么该如何选择ImageNamed和imageWithContentsOfFile呢？" class="headerlink" title="那么该如何选择ImageNamed和imageWithContentsOfFile呢？"></a>那么该如何选择ImageNamed和imageWithContentsOfFile呢？</h6><p>如果加载一张很大的图片，并且只使用一次，那么就不需要缓存这个图片。使用imageWithContentsOfFile会比较合适，因为系统不会浪费内存来缓存图片。<br>如果在程序中需要经常重用的图片，比如UITableView的图片，那么最好的选择是imageNamed方法，它可以节省出每次都从磁盘加载图片的时间。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -134,7 +129,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://StoryTeam.cn/2016/10/31/2016-10-31-CoreAnimation浅析/" data-title="CoreAnimation浅析 | StoryTeam" data-tsina="null" class="share clearfix">
+	  <div data-url="http://StoryTeam.cn/2016/10/31/2016-10-31-iOS序列帧动画浅析/" data-title="iOS序列帧动画浅析 | StoryTeam" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -148,27 +143,19 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2016/10/31/2016-10-31-如何做自己的清道夫/" title="如何做自己的清道夫">
+ <a href="/2016/10/31/2016-10-31-手势和touch/" title="手势和touch">
   <strong>上一篇</strong><br/>
   <span>
-  如何做自己的清道夫</span>
+  手势和touch</span>
 </a>
 </div>
 
-
-<div class="next">
-<a href="/2016/10/31/2016-10-31-手势和touch/"  title="手势和touch">
- <strong>下一篇</strong><br/> 
- <span>手势和touch
-</span>
-</a>
-</div>
 
 </nav>
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2016/10/31/2016-10-31-CoreAnimation浅析/" data-title="CoreAnimation浅析" data-url="http://StoryTeam.cn/2016/10/31/2016-10-31-CoreAnimation浅析/"></div>
+	<div class="ds-thread" data-thread-key="2016/10/31/2016-10-31-iOS序列帧动画浅析/" data-title="iOS序列帧动画浅析" data-url="http://StoryTeam.cn/2016/10/31/2016-10-31-iOS序列帧动画浅析/"></div>
 </section>
 
 
@@ -178,7 +165,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-基本概念"><span class="toc-number">1.</span> <span class="toc-text">1 基本概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-使用方法"><span class="toc-number">2.</span> <span class="toc-text">2 使用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3-总结"><span class="toc-number">2.1.</span> <span class="toc-text">3 总结</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#系统方法"><span class="toc-number">1.</span> <span class="toc-text">系统方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#自定义方法"><span class="toc-number">2.</span> <span class="toc-text">自定义方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-CADisplayLink"><span class="toc-number">2.1.</span> <span class="toc-text">1. CADisplayLink</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#CADisplayLink-与-NSTimer-有什么不同"><span class="toc-number">2.1.1.</span> <span class="toc-text">CADisplayLink 与 NSTimer 有什么不同</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-imageNamed-和-imageWithContentsOfFile"><span class="toc-number">2.2.</span> <span class="toc-text">2.imageNamed 和 imageWithContentsOfFile</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#那么该如何选择ImageNamed和imageWithContentsOfFile呢？"><span class="toc-number">2.2.1.</span> <span class="toc-text">那么该如何选择ImageNamed和imageWithContentsOfFile呢？</span></a></li></ol></li></ol></li></ol>
  
   </div>
 
